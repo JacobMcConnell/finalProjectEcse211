@@ -3,6 +3,8 @@ package ca.mcgill.ecse211.navigation;
 /**
  * Navigation.java This class is used for navigating the robot (without obstacles)
  * 
+ * NOTE FROM JACOB: this needs to be updated so that it can handle obstacles well 
+ * 
  * @author Erdong Luo
  * @author Lara Ghanem
  */
@@ -155,7 +157,9 @@ public class Navigation extends Thread {
   }
 
   /**
-   * A method to turn our vehicle to a certain angle
+   * A method to turn our vehicle by a certain angle
+   * 
+   * JACOB would like this renamed
    * 
    * @param theta the angle you want to turn to
    */
@@ -187,8 +191,10 @@ public class Navigation extends Thread {
   }
 
   /**
-   * A method to turn our vehicle to a certain angle jacob made this one actually turns the robot to
-   * face the angle
+   * A method to turn our vehicle to a certain angle. 
+   * 
+   * @author jacob
+   * 
    * 
    * @param theta
    */
@@ -233,5 +239,17 @@ public class Navigation extends Thread {
    */
   public static int convertAngle(double radius, double width, double angle) {
     return convertDistance(radius, Math.PI * width * angle / 360.0);
+  }
+  
+  
+  /**
+   * This performs navigation using the coordinate system for the final project 
+   * @param x
+   * @param y
+   * 
+   */
+  public static void travelToFP(double x, double y) {
+    // this needs to be filled in
+    
   }
 }

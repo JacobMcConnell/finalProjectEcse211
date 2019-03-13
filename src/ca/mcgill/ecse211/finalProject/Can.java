@@ -36,8 +36,8 @@ public class Can {
     
   }
   /**
-   * This method is used to determine the closest can to the input coordinates. it returns that can. 
-   * it iterates through canList and checks if each can is the same as the coordinates using same can
+   * This method is used to determine the closest can to the input coordinates. It returns that can. 
+   * It iterates through canList and checks if each can is the same as the coordinates using sameCan method
    * 
    * @param x
    * @param y
@@ -51,8 +51,8 @@ public class Can {
   }
   
   /**
-   * This method is used to determine whether a new can should be made or if we should update an old can
-   * it iterates through canList and checks if each can is the same as the coordinates using same can
+   * This method is used to determine whether a new can should be made or if we should update an old can.
+   * It does this by iterating through canList and checking if each can is the same as the coordinates using same can
    * @param x
    * @param y
    * @param USDistance
@@ -82,7 +82,7 @@ public class Can {
    * this method updates the cans position if necessary to be more accurate 
    * 
    * we may use some kind of waiting system with US distance or maybe just discrete 
-   * but if almsot equal definitly average 
+   * but if the cans are almost equal then take the average location for it.  
    * @param x
    * @param y
    * @param USDistance

@@ -111,7 +111,7 @@ public class ColorClassification {
   }
 
   /**
-   * turn color sensor
+   * turn color sensor right
    * 
    * @param degrees to turn right
    */
@@ -124,7 +124,7 @@ public class ColorClassification {
   }
 
   /**
-   * turn color sensor
+   * turn color sensor left
    * 
    * @param degrees to turn left
    */
