@@ -8,6 +8,7 @@ package ca.mcgill.ecse211.colorClassification;
 
 
 import java.text.DecimalFormat;
+import ca.mcgill.ecse211.finalProject.Main;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
@@ -21,8 +22,8 @@ import lejos.robotics.SampleProvider;
 public class ColorClassification {
 
   // Motor objects
-  public static final EV3MediumRegulatedMotor lightMotor =
-      new EV3MediumRegulatedMotor(LocalEV3.get().getPort("B"));
+  public static final EV3MediumRegulatedMotor lightMotor = Main.lightMotor;
+     
   private EV3ColorSensor colorSensor;
 
   // Light sensor objects

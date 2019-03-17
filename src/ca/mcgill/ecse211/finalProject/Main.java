@@ -1,16 +1,19 @@
 package ca.mcgill.ecse211.finalProject;
 
 
+import ca.mcgill.ecse211.USPoller.UltrasonicPollerJ;
 import ca.mcgill.ecse211.localization.LightLocalizer;
 import ca.mcgill.ecse211.localization.USLocalizer;
 import ca.mcgill.ecse211.navigation.Navigation;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import ca.mcgill.ecse211.odometer.OdometryCorrection;
+import ca.mcgill.ecse211.stateNavigation.NavigatorJ;
 import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
@@ -19,13 +22,13 @@ import lejos.robotics.SampleProvider;
 
 public class Main {
 //Motor Objects, and Robot related parameters
- private static final EV3LargeRegulatedMotor leftMotor =
+ public static final EV3LargeRegulatedMotor leftMotor =
      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
- private static final EV3LargeRegulatedMotor rightMotor =
+ public static final EV3LargeRegulatedMotor rightMotor =
      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
 
  private static final TextLCD lcd = LocalEV3.get().getTextLCD();
- private static final Port usPort = LocalEV3.get().getPort("S2");
+ private static final Port usPort = LocalEV3.get().getPort("S4");
 
  private static final EV3ColorSensor colorSamplerSensor =
      new EV3ColorSensor(LocalEV3.get().getPort("S3"));
@@ -47,9 +50,61 @@ public class Main {
  static Navigation navigation;
  
  
+ //navigation 
+ 
+ static NavigatorJ nav;
+ 
  // project variable
  static int startingCorner; 
  
+ 
+ 
+ ////
+ public static final EV3LargeRegulatedMotor grabMotor =
+     new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+ 
+ 
+
+ /**
+  * This is an initialization of the light(color) sensor.
+  * */
+ public static final Port colourPort = LocalEV3.get().getPort("S1");
+ 
+ /**
+  * This is an initialization of the right light port.
+  * */
+ public static final Port rightLightPort = LocalEV3.get().getPort("S3");
+ 
+ /**
+  * This is an initialization of the left light port.
+  * */
+ public static final Port leftLightPort = LocalEV3.get().getPort("S2");
+ 
+ //setting up the left light sensor 
+public static EV3ColorSensor leftLightSensor = new EV3ColorSensor(leftLightPort); 
+public static SampleProvider leftLightSampler = leftLightSensor.getRedMode(); 
+public static float[] leftLightData = new float[leftLightSampler.sampleSize()]; 
+                                                     
+ 
+
+
+
+
+//setting up the right light sensor 
+public static EV3ColorSensor rightLightSensor = new EV3ColorSensor(rightLightPort); 
+public static SampleProvider rightLightSampler = rightLightSensor.getRedMode(); 
+public static float[] rightLightData = new float[rightLightSampler.sampleSize()]; 
+                                                    
+
+
+
+
+//colour sensor objects
+public static EV3ColorSensor colorSensor = new EV3ColorSensor(colourPort);
+public static SampleProvider rgbSampleProvider = colorSensor.getMode("RGB");
+public static float[] rgbData = new float[rgbSampleProvider.sampleSize()];
+
+
  
  
  
@@ -110,11 +165,42 @@ private static double TN_START_y;
 private static double TN_END_y;
 private static double TN_END_x;
 // end of stuff to be calculated 
+public static int locate_cans_mSeconds= 50;
+public static UltrasonicPollerJ usPoller;
  
+
+
+
  
 
 
   public static void main(String[] args) {
+    
+    
+    //pre lab testing for navigation (should also do localization ) 
+    
+ // Odometer objects
+    try {
+      odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD, startingCorner);
+    } catch (OdometerExceptions e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+   
+    // Odometer thread
+    Thread odoThread = new Thread(odometer);
+    odoThread.start();
+    
+    
+    // nav = new NavigatorJ();
+    
+    
+    
+    
+    
+    
+    /*
+    
     
     //zeroeth thing we do is get all the data from the wifi class
     
@@ -212,7 +298,7 @@ private static double TN_END_x;
        
        
      }
-    
+    */
     
     
     
@@ -226,3 +312,5 @@ private static double TN_END_x;
   }
 
 }
+
+

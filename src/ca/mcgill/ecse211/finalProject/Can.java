@@ -46,9 +46,41 @@ public class Can {
    */
   public static Can closestCan(double x,double y, double USDistance){
     // must make this method 
+    Can maxCan = 0;
+    double max; 
+    for (int i =0; i < canList.size();i++) {
+      
+      
+      Can canI= canList.get(i);
+      
+     if ( sameCan(x,y,USDistance,canI)) {
+       double eD = euclideanDistance(x,y,canI.x,canI.y);
+       if (eD < max) {
+         
+         
+       }
+     }
+      
+    }
+    
     return new Can(1,1,1);
     
   }
+  
+  
+  
+  
+  
+     double howClose(double Can2x,double Can2y,double USDistance) {
+      Can can1= this;
+      
+      return USDistance;
+       
+     }
+     
+     static double euclideanDistance(double x, double y, double x2, double y2) {
+       return Math.sqrt((x-x2)*(x-x2)+(y-y2)*(y-y2)); 
+     }
   
   /**
    * This method is used to determine whether a new can should be made or if we should update an old can.
@@ -86,9 +118,9 @@ public class Can {
    * @param x
    * @param y
    * @param USDistance
-   * @param can
+   * 
    */
-  public static void updateCan(double x, double y, double USDistance, Can can) {
+  public void updateCan(double x, double y, double USDistance) {
     // must make this method 
   }
   
