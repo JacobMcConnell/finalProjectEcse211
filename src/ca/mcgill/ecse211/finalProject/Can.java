@@ -46,8 +46,9 @@ public class Can {
    */
   public static Can closestCan(double x,double y, double USDistance){
     // must make this method 
-    Can maxCan = 0;
+    Can maxCan = null;
     double max; 
+    max =0;
     for (int i =0; i < canList.size();i++) {
       
       
@@ -56,6 +57,7 @@ public class Can {
      if ( sameCan(x,y,USDistance,canI)) {
        double eD = euclideanDistance(x,y,canI.x,canI.y);
        if (eD < max) {
+        // if ()
          
          
        }

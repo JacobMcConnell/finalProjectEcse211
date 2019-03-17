@@ -25,7 +25,7 @@ public class Main {
  public static final EV3LargeRegulatedMotor leftMotor =
      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
  public static final EV3LargeRegulatedMotor rightMotor =
-     new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
+     new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 
  private static final TextLCD lcd = LocalEV3.get().getTextLCD();
  private static final Port usPort = LocalEV3.get().getPort("S4");
@@ -62,6 +62,9 @@ public class Main {
  ////
  public static final EV3LargeRegulatedMotor grabMotor =
      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+ 
+ public static final EV3MediumRegulatedMotor lightMotor =
+     new EV3MediumRegulatedMotor(LocalEV3.get().getPort("B"));
  
  
 
