@@ -103,6 +103,7 @@ public class Can {
      }
   
   /**
+   * THIS IS PROBABLY NOT NECESSARY SO I DID NOT MAKE IT 
    * This method is used to determine whether a new can should be made or if we should update an old can.
    * It does this by iterating through canList and checking if each can is the same as the coordinates using same can
    * @param x
