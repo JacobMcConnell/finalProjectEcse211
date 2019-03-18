@@ -2,6 +2,7 @@ package ca.mcgill.ecse211.finalProject;
 
 
 import ca.mcgill.ecse211.USPoller.UltrasonicPollerJ;
+import ca.mcgill.ecse211.WiFiClientExample.WiFiClass;
 import ca.mcgill.ecse211.localization.LightLocalizer;
 import ca.mcgill.ecse211.localization.USLocalizer;
 import ca.mcgill.ecse211.navigation.Navigation;
@@ -82,6 +83,25 @@ public class Main {
   * This is an initialization of the left light port.
   * */
  public static final Port leftLightPort = LocalEV3.get().getPort("S2");
+public static final String server_IP = "192.168.2.24";
+public static final int team_NUM = 14;
+/**
+ * this factor controlls how sensitive we are for deciding whether something is the same can with respect 
+ * to the ultra sonic distance when we measured the can 
+ * in other words it is a measure of how much we care about the fuzzyness of our measuremnt  of the can 
+ * SOMEONE PLEASE TEST THIS TO MAKE SURE THAT IT IS A GOOD VALUE I THINK IT SHOULD BE FAIRLY LOW 
+ */
+public static final double distance_Factor_for_Cans = 0.01;
+/**
+ * can sensitivity is how far from a point should we consider a can to be 
+ * in theory this should be the diameter of a can 5.5 
+ * may need to be bigger in practice 
+ */
+public static final double canSensitivity = 5.5;
+/**
+ * this constant tells us whether a measurement is basically equal for the US sensor
+ */
+public static final double USDistance_Can_Equality_Radius = 3;
  
  //setting up the left light sensor 
 public static EV3ColorSensor leftLightSensor = new EV3ColorSensor(leftLightPort); 
@@ -113,38 +133,55 @@ public static float[] rgbData = new float[rgbSampleProvider.sampleSize()];
  
  
  //stuff we will be transfered for the project
- static int RedTeam;
- int GreenTeam;
+ public static int RedTeam;
+ public static int GreenTeam;
  
- static int redCorner;
- static int greenCorner;
+ public static int redCorner;
+ public static int greenCorner;
  
- int Red_UR_x;
- int Red_LLx;
- int Red_UR_y;
- int Red_LL_y; 
+ public static int Red_UR_x;
+ public static int Red_LLx;
+ public static int Red_UR_y;
+ public static int Red_LL_y; 
  
- int Green_UR_x;
- int Green_LL_x;
- int Green_UR_y; 
- int Green_LL_y;
+ public static int Green_UR_x;
+ public static int Green_LL_x;
+ public static int Green_UR_y; 
+ public static int Green_LL_y;
  
- int Island_UR_x;
- int Island_LL_x;
- int Island_UR_y;
- int Island_LL_y;
- 
- 
- static int TNR_LL_x;
- static int TNR_UR_x;
- static int TNR_LL_y;
- static int TNR_UR_y;
+ public static int Island_UR_x;
+ public static int Island_LL_x;
+ public static int Island_UR_y;
+ public static int Island_LL_y;
  
  
- static int TNG_LL_x;
- static int TNG_UR_x;
- static int TNG_LL_y;
- static int TNG_UR_y;
+ public static int TNR_LL_x;
+ public static int TNR_UR_x;
+ public static int TNR_LL_y;
+ public static int TNR_UR_y;
+ 
+ 
+ public static int TNG_LL_x;
+ public static int TNG_UR_x;
+ public static int TNG_LL_y;
+ public static int TNG_UR_y;
+ 
+ 
+
+ 
+ 
+ public static int SZR_UR_x;
+ public  static int SZR_UR_y; 
+ 
+ public static int SZG_UR_x;
+ public static int  SZG_UR_y;
+ 
+ 
+ public static int SZR_LL_y;
+ public static int SZR_LL_x;
+ public static int SZG_LL_x;
+ public static int SZG_LL_y;
+
  
  
  static int TN_LL_x;
@@ -152,14 +189,6 @@ public static float[] rgbData = new float[rgbSampleProvider.sampleSize()];
  static int TN_LL_y;
  static int TN_UR_y;
  
- 
- 
- static int SZR_UR_x;
- static int SZR_UR_y; 
- 
- static int SZG_UR_x;
- static int  SZG_UR_y;
-
  
  
 private static double TN_START_x;// this shoudl be just before it 
@@ -170,7 +199,7 @@ private static double TN_END_x;
 // end of stuff to be calculated 
 public static int locate_cans_mSeconds= 50;
 public static UltrasonicPollerJ usPoller;
- 
+
 
 
 
@@ -195,19 +224,19 @@ public static UltrasonicPollerJ usPoller;
     odoThread.start();
     
     
+    
+    
+    
     // nav = new NavigatorJ();
     
     
     
-    
-    
+  //zeroeth thing we do is get all the data from the wifi class
+    WiFiClass.GetWIFIinfo();
     
     /*
     
-    
-    //zeroeth thing we do is get all the data from the wifi class
-    
-    
+  
     
     
     

@@ -10,6 +10,10 @@ import java.util.List;
  *
  */
 public class Can {
+  //PLEASE SOMEONE FIND THE RIGHT VALUE FOR THIS 
+  private static final double distance_Factor = Main.distance_Factor_for_Cans;
+
+  private static final double USDE = Main.USDistance_Can_Equality_Radius;
   
   double x;
   double y; 
@@ -18,7 +22,7 @@ public class Can {
   
   //static can variables 
   public static List<Can> canList= new ArrayList<Can>();
-  static double canSensitivity= 5; 
+  static double canSensitivity= Main.canSensitivity; 
   
   /**
    * constructor makes new can object 
@@ -46,9 +50,9 @@ public class Can {
    */
   public static Can closestCan(double x,double y, double USDistance){
     // must make this method 
-    Can maxCan = null;
-    double max; 
-    max =0;
+    Can minCan = null;
+    double min; 
+    min =0;
     for (int i =0; i < canList.size();i++) {
       
       
@@ -56,8 +60,13 @@ public class Can {
       
      if ( sameCan(x,y,USDistance,canI)) {
        double eD = euclideanDistance(x,y,canI.x,canI.y);
-       if (eD < max) {
+       if (eD < min) {
         // if ()
+           if (sameCan(x,y,USDistance, canI)) {
+             min= eD;
+             minCan= canI;
+           }
+        
          
          
        }
@@ -65,7 +74,9 @@ public class Can {
       
     }
     
-    return new Can(1,1,1);
+    return minCan;
+    
+   //breturn new Can(1,1,1);
     
   }
   
@@ -79,7 +90,14 @@ public class Can {
       return USDistance;
        
      }
-     
+     /**
+      * returns the euclidean distance between the points
+      * @param x
+      * @param y
+      * @param x2
+      * @param y2
+      * @return distance between the points 
+      */
      static double euclideanDistance(double x, double y, double x2, double y2) {
        return Math.sqrt((x-x2)*(x-x2)+(y-y2)*(y-y2)); 
      }
@@ -109,7 +127,13 @@ public class Can {
    */
   public static boolean sameCan(double x,double y, double USDistance, Can can){
     // must make this method 
+    
+    if (euclideanDistance(x,y,can.x ,can.y )< (Can.canSensitivity+USDistance*distance_Factor+can.closest_distance*distance_Factor)) {
+      return true;
+      
+    }else {
     return false;
+    }
     
   }
   /**
@@ -124,6 +148,21 @@ public class Can {
    */
   public void updateCan(double x, double y, double USDistance) {
     // must make this method 
+    
+    if  (USDistance < (this.closest_distance - USDE) ){
+      // new one is closer so just use it 
+      this.x= x;
+      this.y =y;
+      this.closest_distance= USDistance;
+    } else if (USDistance> (this.closest_distance+ USDE)) {
+      //dont update can cause it will be less accurate 
+      
+    } else {
+      //around equal so take the average 
+      this.x= (this.x+ x)/2;
+      this.y= (this.y+ y)/2;
+      this.closest_distance= (this.closest_distance+ USDistance)/2;
+    }
   }
   
   
