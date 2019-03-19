@@ -115,7 +115,7 @@ public class Navigation extends Thread {
     double hypot = Math.hypot(deltax, deltay);
 
     // Turn to the correct angle towards the endpoint
-    turnTo(mTheta);
+    turnToNoWait(mTheta);
 
     leftMotor.setSpeed(FORWARD_SPEED);
     rightMotor.setSpeed(FORWARD_SPEED);
@@ -126,6 +126,37 @@ public class Navigation extends Thread {
     // stop vehicle
     // leftMotor.stop(true);
     // rightMotor.stop(true);
+  }
+  /**
+   * turns by the amount specified without waiting 
+   * @param theta
+   */
+  public void turnToNoWait(double theta) {
+    // TODO Auto-generated method stub
+ // ensures minimum angle for turning
+    if (theta > Math.PI) {
+      theta -= 2 * Math.PI;
+    } else if (theta < -Math.PI) {
+      theta += 2 * Math.PI;
+    }
+
+    // set Speed
+    leftMotor.setSpeed(ROTATE_SPEED);
+    rightMotor.setSpeed(ROTATE_SPEED);
+
+    // rotate motors at set speed
+
+    // if angle is negative, turn to the left
+    if (theta < 0) {
+      leftMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, -(theta * 180) / Math.PI), true);
+      rightMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, -(theta * 180) / Math.PI), true);
+
+    } else {
+      // angle is positive, turn to the right
+      leftMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, (theta * 180) / Math.PI), true);
+      rightMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, (theta * 180) / Math.PI), true);
+    }
+    
   }
 
   public void travelTodis(double x, double y) {

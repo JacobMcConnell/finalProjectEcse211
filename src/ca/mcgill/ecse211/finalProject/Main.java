@@ -42,8 +42,8 @@ public static final double SENSOR_LENGTH = -4.9;
 
 
 // Motor Objects, and navigator related parameters
-private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
-private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
+static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
+public static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 
 
 private static final TextLCD lcd = LocalEV3.get().getTextLCD();
@@ -57,7 +57,7 @@ private static final EV3ColorSensor leftLight = new EV3ColorSensor(LocalEV3.get(
 private static final EV3ColorSensor rightLight = new EV3ColorSensor(LocalEV3.get().getPort("S3"));
 private static LightSensorCon leftLS = new LightSensorCon(leftLight,lcd);
 private static LightSensorCon rightLS = new LightSensorCon(rightLight,lcd);
-private static Navigator navigator = new Navigator(odometer,leftMotor,rightMotor);
+public static Navigator navigator = new Navigator(odometer,leftMotor,rightMotor);
 private static OdometryCorrection odoCorr = new OdometryCorrection(odometer,navigator,leftLS,rightLS);
 
 
@@ -163,18 +163,18 @@ public static final double USDistance_Can_Equality_Radius = 3;
 
  
  
- static int TN_LL_x;
- static int TN_UR_x;
- static int TN_LL_y;
- static int TN_UR_y;
+ public static int TN_LL_x;
+public  static int TN_UR_x;
+public static int TN_LL_y;
+ public static int TN_UR_y;
  
  
  
-private static double TN_START_x;// this shoudl be just before it 
+static double TN_START_x;// this shoudl be just before it 
 /// thesee must be calculated as averages from TN_LL_y ect 
-private static double TN_START_y;
-private static double TN_END_y;
-private static double TN_END_x;
+public static double TN_START_y;
+static double TN_END_y;
+static double TN_END_x;
 // end of stuff to be calculated 
 public static int locate_cans_mSeconds= 50;
 public static UltrasonicPollerJ usPoller;
@@ -191,7 +191,8 @@ public static void main(String[] args) throws OdometerExceptions {
 	
 	
 			
-
+            WiFiClass.GetWIFIinfo();
+            FinalProjectMethods.hadleProjectVariables();
 			//Odometer objects
 			
 			Display odometryDisplay = new Display(lcd); // No need to change
@@ -222,7 +223,12 @@ public static void main(String[] args) throws OdometerExceptions {
 			
 			Sound.beep();
 			
+			//GEt me to begining of seach space as described
+			FinalProjectMethods.searchForCans();
 			
+			navigator.directTravelTo(SZ_UR_x, SZ_UR_y);
+			// do apropriate beeps 
+			// 5 beeps for beta demo 
 			
 			
 			
