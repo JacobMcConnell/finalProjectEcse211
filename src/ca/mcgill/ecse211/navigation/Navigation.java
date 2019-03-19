@@ -127,6 +127,41 @@ public class Navigation extends Thread {
     // leftMotor.stop(true);
     // rightMotor.stop(true);
   }
+  
+  
+  /**
+   * A method to drive our vehicle to a distance z from a Cartesian coordinate but does not wait to return
+   * 
+   * @param x X-Coordinate
+   * @param y Y-Coordinate
+   */
+  public void travelToNoWaitMINUS(double x, double y,double z) {
+
+    current_x_pos = odometer.getXYT()[0];
+    current_y_pos = odometer.getXYT()[1];
+
+    deltax = x - current_x_pos;
+    deltay = y - current_y_pos;
+
+    // Calculate the angle to turn around
+    currTheta = (odometer.getXYT()[2]) * Math.PI / 180;
+    double mTheta = Math.atan2(deltax, deltay) - currTheta;
+
+    double hypot = Math.hypot(deltax, deltay);
+
+    // Turn to the correct angle towards the endpoint
+    turnToNoWait(mTheta);
+
+    leftMotor.setSpeed(FORWARD_SPEED);
+    rightMotor.setSpeed(FORWARD_SPEED);
+
+    leftMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot-z), true);
+    rightMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot-z), true);
+
+    // stop vehicle
+    // leftMotor.stop(true);
+    // rightMotor.stop(true);
+  }
   /**
    * turns by the amount specified without waiting 
    * @param theta

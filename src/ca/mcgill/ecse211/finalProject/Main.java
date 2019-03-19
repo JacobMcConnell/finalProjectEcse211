@@ -104,6 +104,7 @@ public static final double canSensitivity = 5.5;
  * this constant tells us whether a measurement is basically equal for the US sensor
  */
 public static final double USDistance_Can_Equality_Radius = 3;
+public static final double StoppingDistanceFromCan = 4.5;
 
                                                     
 
@@ -226,7 +227,7 @@ public static void main(String[] args) throws OdometerExceptions {
 			//GEt me to begining of seach space as described
 			FinalProjectMethods.searchForCans();
 			
-			navigator.directTravelTo(SZ_UR_x, SZ_UR_y);
+			navigator.travelTo(SZ_UR_x, SZ_UR_y);
 			// do apropriate beeps 
 			// 5 beeps for beta demo 
 			

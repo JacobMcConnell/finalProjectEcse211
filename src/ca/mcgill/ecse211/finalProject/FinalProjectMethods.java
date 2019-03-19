@@ -64,7 +64,7 @@ public class FinalProjectMethods {
       threadSafeTurn(180);
       if (Can.numberOfUnScannedCans()>0) {
         //search for cans 
-        
+        scanCans();
         Main.navigator.travelTo(waypoints[i][0],waypoints[i][1]);
       }
       
@@ -73,8 +73,41 @@ public class FinalProjectMethods {
       i++;
     }
   }
+  
+  /**
+   * travels to and scans the cans untill no unscanned cans 
+   */
+    public static void scanCans() {
+      while (Can.numberOfUnScannedCans()>1) {
+        Can closestCan=Can.getClosestCanToRobo();
+        threadTravelTo(closestCan);
+        //scan the can
+        // when we weigh the can and carry it in real version
+        // make sure to turn off locate cans before 
+        // and turn it on after 
+        closestCan.scanned=true;
+        //for the non beta here is where we would take the can to starting square 
+        
+      }
+      
+    }
     
     
+    //takes us to the can while allowing us to scan it 
+    private static void threadTravelTo(Can closestCan) {
+    // TODO Auto-generated method stub
+      Main.navigation.travelToNoWaitMINUS(closestCan.x, closestCan.y, Main.StoppingDistanceFromCan);
+      while(Main.leftMotor.isMoving()) {
+        try {
+          Thread.sleep(15);
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    
+  }
+
     /**
      * this should turn degrees to one side while allowing the scan thread to work (probably not actually 
      * safe) 

@@ -181,13 +181,31 @@ public class Can {
       this.closest_distance= (this.closest_distance+ USDistance)/2;
     }
   }
-  
-  
- 
-  
-  
-  
-  
-  
+  /**
+   * finds the closest can to the robots location
+   * @return closest can to the robot 
+   */
+  public static Can getClosestCanToRobo() {
+    Can minCan = null;
+    double min; 
+    min =0;
+    for (int i =0; i < canList.size();i++) {
+      
+      
+      Can canI= canList.get(i);
+      
+   
+       double eD = euclideanDistance(Main.odometer.getX(),Main.odometer.getY(),canI.x,canI.y);
+       if (eD < min) {
+        // if ()
+          
+             min= eD;
+             minCan= canI;
+           
+       }
+     
+  }
+  return minCan;
+  }
 
 }
