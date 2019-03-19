@@ -49,7 +49,13 @@ public class FinalProjectMethods {
    */
   public static void searchForCans() {
     //need to complete 
+    int[][] waypoints= waypointsForSearch();
+    int i=0; // maybe make this global to not repeat 
     while (Can.numberOfUnScannedCans()<1) {
+      
+      //navigate.travelTo(waypoints[i][0],waypoints[i][1]);
+      i++;
+      // turn 180 degres around and it should be a thead that somehow sleeps every 10 mili seconds ect 
       
     }
     
