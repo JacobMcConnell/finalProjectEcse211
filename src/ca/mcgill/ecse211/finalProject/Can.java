@@ -39,6 +39,22 @@ public class Can {
     
     
   }
+  
+  /** 
+   * This method returns the number of cans that have not been scanned. 
+   * @return the number of cans that have not been scanned
+   */
+  public static int numberOfUnScannedCans() {
+    int x = 0; 
+    for(int i =0 ; i<canList.size(); i++) {
+      if (!(canList.get(i).scanned)){
+        x++;
+      }
+    }
+    return x; 
+    
+    
+  }
   /**
    * This method is used to determine the closest can to the input coordinates. It returns that can. 
    * It iterates through canList and checks if each can is the same as the coordinates using sameCan method

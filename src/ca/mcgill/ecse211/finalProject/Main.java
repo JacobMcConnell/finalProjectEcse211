@@ -11,6 +11,7 @@ import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import ca.mcgill.ecse211.odometer.OdometryCorrection;
 import ca.mcgill.ecse211.stateNavigation.NavigatorJ;
 import lejos.hardware.Button;
+import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -199,6 +200,10 @@ private static double TN_END_x;
 // end of stuff to be calculated 
 public static int locate_cans_mSeconds= 50;
 public static UltrasonicPollerJ usPoller;
+public static int SZ_UR_y;
+public static int SZ_LL_y;
+public static int SZ_LL_x;
+public static int SZ_UR_x;
 
 
 
@@ -208,8 +213,11 @@ public static UltrasonicPollerJ usPoller;
 
   public static void main(String[] args) {
     
+    Button.waitForAnyPress();// start button 
     
-    //pre lab testing for navigation (should also do localization ) 
+    
+    
+   
     
  // Odometer objects
     try {
@@ -234,11 +242,109 @@ public static UltrasonicPollerJ usPoller;
   //zeroeth thing we do is get all the data from the wifi class
     WiFiClass.GetWIFIinfo();
     
-    /*
-    
+    // setting all our variables depending on our team 
+    if (RedTeam==14) {
+      startingCorner= redCorner;
+      SZ_UR_y= SZR_UR_y;
+      SZ_LL_y= SZR_LL_y;
+      SZ_LL_x= SZR_LL_x;
+      SZ_UR_x = SZR_LL_x;
+      
+      
+      TN_LL_x = TNR_LL_x;
+      TN_UR_x = TNR_UR_x;
+      TN_LL_y = TNR_LL_y;
+      TN_UR_y= TNR_UR_y;
+      
+      if (Math.abs(TN_LL_x-TN_UR_x)<1.1) {
+        // then the tunnel is verticle 
+        TN_START_x= (TN_LL_x+TN_UR_x)/2;
+        TN_START_y= TN_LL_y;
+        TN_END_x= (TN_LL_x+TN_UR_x)/2;
+        TN_END_y = TN_UR_y; 
+        
+      } else {
+        // the tunnel is horizontal 
+        TN_START_x = TN_LL_x; 
+        TN_START_y= (TN_LL_y+TN_UR_y)/2;
+        TN_END_x= TN_UR_x;
+        TN_END_y= (TN_LL_y+TN_UR_y)/2;
+        
+      }
+      
+      
+      
+      
+      
+    } else {
+      startingCorner=greenCorner;
+      SZ_UR_y= SZG_UR_y;
+      SZ_LL_y= SZG_LL_y;
+      SZ_LL_x= SZG_LL_x;
+      SZ_UR_x = SZG_LL_x;
+      
+      
+      TN_LL_x = TNG_LL_x;
+      TN_UR_x = TNG_UR_x;
+      TN_LL_y = TNG_LL_y;
+      TN_UR_y= TNG_UR_y;
+      
+      
+      
+      if (Math.abs(TN_LL_x-TN_UR_x)<1.1) {
+        // then the tunnel is verticle 
+        TN_START_x= (TN_LL_x+TN_UR_x)/2;
+        TN_START_y= TN_LL_y;
+        TN_END_x= (TN_LL_x+TN_UR_x)/2;
+        TN_END_y = TN_UR_y; 
+        
+      } else {
+        // the tunnel is horizontal 
+        TN_START_x = TN_LL_x; 
+        TN_START_y= (TN_LL_y+TN_UR_y)/2;
+        TN_END_x= TN_UR_x;
+        TN_END_y= (TN_LL_y+TN_UR_y)/2;
+        
+      }
+    }
   
+    Navigation nav = new Navigation(odometer, leftMotor, rightMotor);
+    nav.run();
+    
+   //LOCALIZE
     
     
+    
+    //START THE ODO COrrection 
+    
+    // MAKE SURE WE REFLECT OUR CORNER 
+    
+    
+    
+    // finish localization 
+    
+    Sound.twoBeeps();
+    Sound.beep();
+    
+    
+    nav.travelToFP(TN_START_x, TN_START_y);
+    nav.travelToFP(TN_END_x, TN_END_y);
+    
+    nav.travelToFP(SZ_LL_x, SZ_LL_y);
+    
+    
+    Sound.twoBeeps();
+    Sound.beep();
+    
+    LocateCans LCT = new LocateCans();
+    LCT.run();
+    
+    
+    
+    
+    
+    
+    /*
     
     
     // TODO Auto-generated method stub

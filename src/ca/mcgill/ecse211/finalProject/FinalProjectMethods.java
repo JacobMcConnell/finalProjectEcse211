@@ -49,6 +49,28 @@ public class FinalProjectMethods {
    */
   public static void searchForCans() {
     //need to complete 
+    while (Can.numberOfUnScannedCans()<1) {
+      
+    }
+    
+    
+    
+    
+    
+  }
+  
+  public static int[][] waypointsForSearch(){
+    int width= Main.SZ_UR_x-Main.SZ_LL_x;
+    int height = Main.SZ_UR_y - Main.SZ_LL_y;
+    int [][] waypoints= new int[width*height][2]; 
+    for (int i=0; i< height; i++) {
+      for (int j=0; j<width; j++) {
+        waypoints[i*width+j][0]=Main.SZ_LL_x+j;
+        waypoints[i*width+j][1]= Main.SZ_LL_y+i;
+      }
+    }
+    return waypoints; 
+    
   }
   
   

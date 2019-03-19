@@ -36,6 +36,13 @@ public class LocateCans implements Runnable {
         double deltaY = Math.sin(Math.toRadians(theta))*USDistance;
         double canX = roboX + deltaX; 
         double canY = roboX + deltaY;
+        if (canX>Main.SZ_UR_x||canX<Main.SZ_LL_x) {
+          break;
+        }
+        if (canY>Main.SZ_UR_y||canY<Main.SZ_LL_y) {
+          break;
+        }
+        
         
         Can can = Can.closestCan(canX,canY, USDistance);
         if ( can == null) {
