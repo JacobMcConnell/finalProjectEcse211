@@ -1,6 +1,8 @@
 package ca.mcgill.ecse211.finalProject;
 
 import ca.mcgill.ecse211.odometer.Odometer;
+import lejos.hardware.Sound;
+import lejos.robotics.SampleProvider;
 
 /**
  * This class should run as a thread. It should locate cans that are in the line of sight of the US sensor.
@@ -20,13 +22,27 @@ public class LocateCans implements Runnable {
    * this method is called to run the thread that detects new cans and updates already detected ones to be more accurate about the location
    */
   private int mSeconds= Main.locate_cans_mSeconds;
-  private final double MAX_SENSOR_DISTANCE =30;
+  private final static double MAX_SENSOR_DISTANCE =25;
   
   private static boolean running = true;
+  static SampleProvider usDistance= Main.usDistance;
+  static float[] usData= new float[usDistance.sampleSize()];
+  
+  /**
+   * A method to get the distance from our sensor
+   * 
+   * @return
+   */
+  private static int fetchUS() {
+    usDistance.fetchSample(usData, 0);
+    return (int) (usData[0] * 100);
+  }
+  
   public void run() {
     
     while (running) {
-      double USDistance = Main.usPoller.getDistance();
+      double USDistance = fetchUS();
+      
       
       if (USDistance< MAX_SENSOR_DISTANCE) {
         double theta = Main.odometer.getAngJ();
@@ -36,10 +52,10 @@ public class LocateCans implements Runnable {
         double deltaY = Math.sin(Math.toRadians(theta))*USDistance;
         double canX = roboX + deltaX; 
         double canY = roboX + deltaY;
-        if (canX>Main.SZ_UR_x||canX<Main.SZ_LL_x) {
+        if (canX/30.85+1>Main.SZ_UR_x||canX/30.85+1<Main.SZ_LL_x) {
           break;
         }
-        if (canY>Main.SZ_UR_y||canY<Main.SZ_LL_y) {
+        if (canY/30.85+1>Main.SZ_UR_y||canY/30.85+1<Main.SZ_LL_y) {
           break;
         }
         
@@ -72,5 +88,39 @@ public class LocateCans implements Runnable {
   public static void setRunning(boolean running1) {
     running = running1;
   }
+
+  public static void plain() {
+    // TODO Auto-generated method stub
+    double USDistance = fetchUS();
+    
+    
+    if (USDistance< MAX_SENSOR_DISTANCE) {
+      Sound.beep();
+      double theta = Main.odometer.getAngJ();
+      double roboX = Main.odometer.getX();
+      double roboY = Main.odometer.getY();
+      double deltaX = Math.cos(Math.toRadians(theta))*USDistance;
+      double deltaY = Math.sin(Math.toRadians(theta))*USDistance;
+      double canX = roboX + deltaX; 
+      double canY = roboX + deltaY;
+      if (canX/30.85+1>Main.SZ_UR_x||canX/30.85+1<Main.SZ_LL_x) {
+        return; 
+      }
+      if (canY/30.85+1>Main.SZ_UR_y||canY/30.85+1<Main.SZ_LL_y) {
+        return;
+      }
+      
+      
+      Can can = Can.closestCan(canX,canY, USDistance);
+      if ( can == null) {
+        Can newCan = new Can(canX, canY, USDistance);
+      } else {
+        can.updateCan(canX,canY,USDistance);
+        
+      }
+      
+    }
+  }
+  
 
 }

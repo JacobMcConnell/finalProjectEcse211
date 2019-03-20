@@ -32,13 +32,13 @@ public class Main {
 	
 // Set vehicle constants
 public static final double WHEEL_RAD = 2.1;
-public static final double TRACK = 10.55; // 9.8
+public static final double TRACK = 16.2; // 10.55
 public static final double TILE_SIZE = 30.48;
 public static final int SC = 0;
 public static final int CAN_TO_SENSOR = 5;
 private static final double DISTANCE_CAN_OUT_OF_WAY = 12;
 	
-public static final double SENSOR_LENGTH = -4.9;
+public static final double SENSOR_LENGTH = -12;
 
 
 // Motor Objects, and navigator related parameters
@@ -49,7 +49,7 @@ public static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMot
 private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 private static final Port usPort = LocalEV3.get().getPort("S4");
 static Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor);
-static Navigation navigation;
+static Navigation navigation = new Navigation(odometer, leftMotor, rightMotor);
 
 private static final EV3ColorSensor colorSamplerSensor = new EV3ColorSensor(LocalEV3.get().getPort("S1"));
 
@@ -59,7 +59,7 @@ private static LightSensorCon leftLS = new LightSensorCon(leftLight,lcd);
 private static LightSensorCon rightLS = new LightSensorCon(rightLight,lcd);
 public static Navigator navigator = new Navigator(odometer,leftMotor,rightMotor);
 private static OdometryCorrection odoCorr = new OdometryCorrection(odometer,navigator,leftLS,rightLS);
-
+private static LightLocalizer lightLocalizer = new LightLocalizer(odometer, navigator, leftLS, rightLS);
 
 
 
@@ -85,7 +85,7 @@ static SampleProvider usDistance = ultrasonicSensor.getMode("Distance");
  
 
 
-public static final String server_IP = "192.168.2.24";
+public static final String server_IP = "192.168.2.8";
 public static final int team_NUM = 14;
 /**
  * this factor controlls how sensitive we are for deciding whether something is the same can with respect 
@@ -183,6 +183,7 @@ public static int SZ_UR_y;
 public static int SZ_LL_y;
 public static int SZ_LL_x;
 public static int SZ_UR_x;
+public static int targetColor;
 
 
 
@@ -192,7 +193,8 @@ public static void main(String[] args) throws OdometerExceptions {
 	
 	
 			
-            WiFiClass.GetWIFIinfo();
+  
+           WiFiClass.GetWIFIinfo();
             FinalProjectMethods.hadleProjectVariables();
 			//Odometer objects
 			
@@ -206,30 +208,70 @@ public static void main(String[] args) throws OdometerExceptions {
 			Thread odoDisplayThread = new Thread(odometryDisplay);
 			odoDisplayThread.start();
 			
+			
+			
 			USLocalizer USLocalizer = new USLocalizer(odometer, leftMotor, rightMotor, usDistance);
+			
+			//navigator.travelDist(6000, 250);
+			
+            
+            
+            ///THIS IS JUST FOR THE DEMO
+			targetColor= 1;
 			
 			
 			USLocalizer.localizeFallingEdge();
+			lightLocalizer.initialLocalize();
 			
-			
-			odometer.setXYT(0, 0, 0);
+			odometer.initialize(startingCorner);
+			//odometer.setXYT(30, 30, 0);
 			navigator.setOdoCorrection(odoCorr);
-			
-			navigator.travelTo(0, 2);
-			navigator.travelTo(2, 2);
-			navigator.travelTo(2, 0);
-			navigator.travelTo(0, 0);
-			
-			
-			
 			Sound.beep();
 			
+			
+			
+			
+			cross_tn(TN_LL_x, TN_LL_y);
+			
+			
+			
+			
+			
+			
+			
+			navigator.travelTo(SZ_LL_x/3, SZ_LL_y/3);
+			navigator.travelTo(2*SZ_LL_x/3, 2*SZ_LL_y/3);
+			navigator.travelTo(SZ_LL_x, SZ_LL_y);
+			
+			
+			navigator.travelTo(SZ_LL_x, SZ_LL_y);
+			//navigator.travelTo(2, 1);
+			Sound.beep();
+			Sound.beep();
+			Sound.beep();
+            Sound.beep();
+            Sound.beep();
+           
+			
 			//GEt me to begining of seach space as described
-			FinalProjectMethods.searchForCans();
+            //turn on searc for cans 
+            //LocateCans LC = new LocateCans();
+           // Thread tlc= new Thread(LC);
+           // tlc.start()
+           // LC.run();
+			//FinalProjectMethods.searchForCans();
+			//LocateCans.setRunning(false);
 			
 			navigator.travelTo(SZ_UR_x, SZ_UR_y);
+			//navigator.travelTo(4, 3);
 			// do apropriate beeps 
 			// 5 beeps for beta demo 
+			
+			Sound.beep();
+            Sound.beep();
+            Sound.beep();
+            Sound.beep();
+            Sound.beep();
 			
 			
 			
@@ -241,6 +283,84 @@ public static void main(String[] args) throws OdometerExceptions {
 
 
 }
+
+
+
+/**
+ * This method allows to scan the whole can and get 6 sampels to determine the colors detected it
+ * will beep once if it can't find the target can it will beep twice if it can find the target can
+ */
+public static void colorScan() {
+  int targetCan = targetColor;
+  ColorClassification colorClass = new ColorClassification(colorSamplerSensor);
+  float[] rgb;
+  int result = 4;
+  rgb = colorClass.fetch();
+  ColorClassification.rotateArmToLeft(30);
+  rgb = colorClass.fetch();
+  int i = ColorClassification.findMatch(rgb);
+  if (i != 4) {
+    result = i;
+  }
+  ColorClassification.rotateArmToLeft(30);
+  rgb = colorClass.fetch();
+  i = ColorClassification.findMatch(rgb);
+  if (i != 4) {
+    result = i;
+  }
+  ColorClassification.rotateArmToLeft(30);
+  rgb = colorClass.fetch();
+  i = ColorClassification.findMatch(rgb);
+  if (i != 4) {
+    result = i;
+  }
+  ColorClassification.rotateArmToLeft(30);
+  rgb = colorClass.fetch();
+  i = ColorClassification.findMatch(rgb);
+  if (i != 4) {
+    result = i;
+  }
+  ColorClassification.rotateArmToLeft(30);
+  rgb = colorClass.fetch();
+  i = ColorClassification.findMatch(rgb);
+  if (i != 4) {
+    result = i;
+  }
+  ColorClassification.rotateArmToLeft(30);
+  rgb = colorClass.fetch();
+  i = ColorClassification.findMatch(rgb);
+
+  if (i != 4) {
+    result = i;
+  }
+  if (result == targetCan) {
+    Sound.twoBeeps();
+    Sound.twoBeeps();
+    Sound.twoBeeps();
+    Sound.twoBeeps();
+    Sound.twoBeeps();
+  }
+  else {
+    //do nothing 
+   // Sound.beep();
+  }
+
+  ColorClassification.rotateArmToRight(180);
+}
+
+
+
+private static void cross_tn (int x , int y) {
+  //navigator.travelTo(x-1, y-3);
+  navigator.travelTo((int)(0.5*(x-1)),(int)(0.5* y));
+  navigator.travelTo(x-1, y);
+  
+  navigator.turnTo(0);
+  navigator.travelDist(15, 200);
+  navigator.turnTo(90);
+  navigator.travelDist(4*TILE_SIZE, 300);
+}
+
 
 }
 

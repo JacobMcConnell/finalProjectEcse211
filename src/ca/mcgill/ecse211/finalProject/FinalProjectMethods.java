@@ -1,7 +1,9 @@
 package ca.mcgill.ecse211.finalProject;
 
+import java.awt.Color;
 import ca.mcgill.ecse211.navigation.Navigation;
 import ca.mcgill.ecse211.navigation.Navigator;
+import lejos.hardware.Sound;
 
 /**
  * This class contains methods that abstract portions of the final project. 
@@ -60,8 +62,31 @@ public class FinalProjectMethods {
       //navigate.travelTo(waypoints[i][0],waypoints[i][1]);
       Main.navigator.travelTo(waypoints[i][0],waypoints[i][1]);
       // turn 180 degres around and it should be a thead that somehow sleeps every 10 mili seconds ect 
-      threadSafeTurn(90);
-      threadSafeTurn(180);
+      //Main.navigator.turnBy(90, true);
+     // Main.navigator.turnBy(180, false);
+      Main.leftMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), true);
+      Main.rightMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, -90), false);
+      Main.leftMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, -180), true);
+      Main.rightMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, 180), true);
+      while(Main.leftMotor.isMoving()) {
+        
+        LocateCans.plain();
+      }
+      Main.leftMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), true);
+      Main.rightMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, -90), false);
+      /*while (Main.leftMotor.isMoving()) {
+        try {
+          Thread.sleep(500);
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        
+      }
+      */
+      //Main.navigator.turnBy(90, true);
+      //threadSafeTurn(90);
+      //threadSafeTurn(180);
       if (Can.numberOfUnScannedCans()>0) {
         //search for cans 
         scanCans();
@@ -78,13 +103,16 @@ public class FinalProjectMethods {
    * travels to and scans the cans untill no unscanned cans 
    */
     public static void scanCans() {
-      while (Can.numberOfUnScannedCans()>1) {
+      while (Can.numberOfUnScannedCans()>0) {
         Can closestCan=Can.getClosestCanToRobo();
         threadTravelTo(closestCan);
+        
         //scan the can
         // when we weigh the can and carry it in real version
         // make sure to turn off locate cans before 
         // and turn it on after 
+        //Sound.beep();
+        Main.colorScan();
         closestCan.scanned=true;
         //for the non beta here is where we would take the can to starting square 
         
@@ -92,11 +120,14 @@ public class FinalProjectMethods {
       
     }
     
-    
+    //doest work 
     //takes us to the can while allowing us to scan it 
     private static void threadTravelTo(Can closestCan) {
     // TODO Auto-generated method stub
-      Main.navigation.travelToNoWaitMINUS(closestCan.x, closestCan.y, Main.StoppingDistanceFromCan);
+      if (closestCan!=null) {
+      Main.navigation.travelToallowThreadMINUS(closestCan.x, closestCan.y, Main.StoppingDistanceFromCan);
+      }
+      /*
       while(Main.leftMotor.isMoving()) {
         try {
           Thread.sleep(15);
@@ -104,13 +135,15 @@ public class FinalProjectMethods {
           // TODO Auto-generated catch block
           e.printStackTrace();
         }
+        
       }
+      */
     
   }
 
     /**
      * this should turn degrees to one side while allowing the scan thread to work (probably not actually 
-     * safe) 
+     * safe) DOES NOT WORK SHOULD BE THROWN OUT
      * @param degrees
      * 
      */
@@ -118,7 +151,7 @@ public class FinalProjectMethods {
       Main.navigation.turnToNoWait(degrees);
       while (Main.leftMotor.isMoving()) {
         try {
-          Thread.sleep(15);
+          Thread.sleep(30);
         } catch (InterruptedException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
@@ -147,11 +180,12 @@ public class FinalProjectMethods {
     
  // setting all our variables depending on our team 
     if (Main.RedTeam==14) {
+      //Main.targetColor= 3;
       Main.startingCorner= Main.redCorner;
       Main.SZ_UR_y= Main.SZR_UR_y;
       Main.SZ_LL_y= Main.SZR_LL_y;
       Main.SZ_LL_x= Main.SZR_LL_x;
-      Main.SZ_UR_x = Main.SZR_LL_x;
+      Main.SZ_UR_x = Main.SZR_UR_x;
       
       
       Main.TN_LL_x = Main.TNR_LL_x;
@@ -180,11 +214,12 @@ public class FinalProjectMethods {
       
       
     } else {
+      Main.targetColor= 1;
       Main.startingCorner=Main.greenCorner;
       Main.SZ_UR_y= Main.SZG_UR_y;
       Main.SZ_LL_y= Main.SZG_LL_y;
       Main.SZ_LL_x= Main.SZG_LL_x;
-      Main.SZ_UR_x = Main.SZG_LL_x;
+      Main.SZ_UR_x = Main.SZG_UR_x;
       
       
       Main.TN_LL_x = Main.TNG_LL_x;
@@ -214,14 +249,23 @@ public class FinalProjectMethods {
   }
   
   public static int[][] waypointsForSearch(){
-    int width= Main.SZ_UR_x-Main.SZ_LL_x;
-    int height = Main.SZ_UR_y - Main.SZ_LL_y;
+    int width= Main.SZ_UR_x-Main.SZ_LL_x+1;
+    int height = Main.SZ_UR_y - Main.SZ_LL_y+1;
     int [][] waypoints= new int[width*height][2]; 
     for (int i=0; i< height; i++) {
+      // if i is even
+    
       for (int j=0; j<width; j++) {
+        if (i%2==0) {
         waypoints[i*width+j][0]=Main.SZ_LL_x+j;
         waypoints[i*width+j][1]= Main.SZ_LL_y+i;
+        }else {
+          waypoints[i*width+j][0]=Main.SZ_LL_x+(width-1-j);
+          waypoints[i*width+j][1]= Main.SZ_LL_y+i;
+        }
       }
+      
+             
     }
     return waypoints; 
     

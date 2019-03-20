@@ -135,7 +135,7 @@ public class Navigation extends Thread {
    * @param x X-Coordinate
    * @param y Y-Coordinate
    */
-  public void travelToNoWaitMINUS(double x, double y,double z) {
+  public void travelToallowThreadMINUS(double x, double y,double z) {
 
     current_x_pos = odometer.getXYT()[0];
     current_y_pos = odometer.getXYT()[1];
@@ -157,6 +157,14 @@ public class Navigation extends Thread {
 
     leftMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot-z), true);
     rightMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot-z), true);
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    leftMotor.waitComplete();
+    rightMotor.waitComplete();
 
     // stop vehicle
     // leftMotor.stop(true);
