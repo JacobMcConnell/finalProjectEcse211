@@ -107,7 +107,6 @@ public class Navigator {
 				checkAngle((int)corrTheta);
 			//turnTo(corrTheta);
 
-			// Number of tiles to move in X
 			int tilesX = x - lastX;
 
 			// Advance towards next point's x coordinate
@@ -163,7 +162,7 @@ public class Navigator {
 				}
 
 				// travelToDirect() to the next closest point
-				directTravelTo(lastX, lastY + deltay*i);
+				directTravelTo(x, lastY + deltay*i);
 
 				// Correction at the line
 				//odoCorr.correct(corrTheta);
@@ -328,7 +327,7 @@ public class Navigator {
 	public void travelDist(double distance,int speed) {
 
 		resetMotors();
-		setSpeeds(speed,speed);
+		setSpeeds(speed-10,speed);
 		leftMotor.rotate(convertDistance(WHEEL_RAD, distance), true);
 		rightMotor.rotate(convertDistance(WHEEL_RAD, distance), false);
 	}

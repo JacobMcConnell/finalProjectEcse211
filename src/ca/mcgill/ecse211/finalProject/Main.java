@@ -3,6 +3,8 @@ package ca.mcgill.ecse211.finalProject;
 
 import java.text.DecimalFormat;
 
+import javax.swing.text.DefaultEditorKit.BeepAction;
+
 import ca.mcgill.ecse211.USPoller.UltrasonicPollerJ;
 import ca.mcgill.ecse211.WiFiClientExample.WiFiClass;
 import ca.mcgill.ecse211.colorClassification.ColorClassification;
@@ -32,13 +34,13 @@ public class Main {
 	
 // Set vehicle constants
 public static final double WHEEL_RAD = 2.1;
-public static final double TRACK = 10.55; // 9.8
+public static final double TRACK = 16.2; // 9.8
 public static final double TILE_SIZE = 30.48;
 public static final int SC = 0;
 public static final int CAN_TO_SENSOR = 5;
 private static final double DISTANCE_CAN_OUT_OF_WAY = 12;
 	
-public static final double SENSOR_LENGTH = -4.9;
+public static final double SENSOR_LENGTH = -12;
 
 
 // Motor Objects, and navigator related parameters
@@ -59,6 +61,7 @@ private static LightSensorCon leftLS = new LightSensorCon(leftLight,lcd);
 private static LightSensorCon rightLS = new LightSensorCon(rightLight,lcd);
 private static Navigator navigator = new Navigator(odometer,leftMotor,rightMotor);
 private static OdometryCorrection odoCorr = new OdometryCorrection(odometer,navigator,leftLS,rightLS);
+private static LightLocalizer lightLocalizer = new LightLocalizer(odometer,navigator,leftLS, rightLS);
 
 
 
@@ -85,7 +88,7 @@ static SampleProvider usDistance = ultrasonicSensor.getMode("Distance");
  
 
 
-public static final String server_IP = "192.168.2.24";
+public static final String server_IP = "192.168.2.9";
 public static final int team_NUM = 14;
 /**
  * this factor controlls how sensitive we are for deciding whether something is the same can with respect 
@@ -191,7 +194,7 @@ public static void main(String[] args) throws OdometerExceptions {
 			
 
 			//Odometer objects
-			
+			//WiFiClass.GetWIFIinfo();
 			Display odometryDisplay = new Display(lcd); // No need to change
 
 			//Odometer thread
@@ -204,34 +207,99 @@ public static void main(String[] args) throws OdometerExceptions {
 			
 			USLocalizer USLocalizer = new USLocalizer(odometer, leftMotor, rightMotor, usDistance);
 			
+  			odometer.initialize(0);
 			
-			USLocalizer.localizeFallingEdge();
-			
-			
-			odometer.setXYT(0, 0, 0);
 			navigator.setOdoCorrection(odoCorr);
 			
-			navigator.travelTo(0, 2);
-			navigator.travelTo(2, 2);
-			navigator.travelTo(2, 0);
-			navigator.travelTo(0, 0);
+			navigator.travelTo(2, 1);
+			Sound.beep();
+			Sound.beep();
+			Sound.beep();
+			Sound.beep();
+			Sound.beep();
+			navigator.travelTo(4, 3);
+			Sound.beep();
+			Sound.beep();
+			Sound.beep();
+			Sound.beep();
+			Sound.beep();
+			
+//			USLocalizer.localizeFallingEdge();
+//			lightLocalizer.initialLocalize();
+//			
+//			
+//			odometer.initialize(0);
+//			
+//			navigator.setOdoCorrection(odoCorr);
+//			
+//			
+//			
+//			cross_tn(2,2);
+			
+			
 			
 			
 			
 			Sound.beep();
 			
-			
-			
-			
-			
-			
-			
-			
-			//navigation.travelTodis(variable[0]*TILE_SIZE, (variable[0]+1)*TILE_SIZE);
-
-
-
-}
+	
+	}
+	private static void cross_tn (int x , int y) {
+		navigator.travelTo(x-1, y);
+		navigator.turnTo(0);
+		navigator.travelDist(15, 200);
+		navigator.turnTo(90);
+		navigator.travelDist(4*TILE_SIZE, 300);
+	}
+	 public static void colorScan() {
+		  int targetCan = 1;
+		  ColorClassification colorClass = new ColorClassification(colorSamplerSensor);
+		  float[] rgb;
+		  int result = 4;
+		  rgb = colorClass.fetch();
+		  ColorClassification.rotateArmToLeft(30);
+		  rgb = colorClass.fetch();
+		  int i = ColorClassification.findMatch(rgb);
+		  if(i!=4 ) {
+			  result = i;
+		  }
+		  ColorClassification.rotateArmToLeft(30);
+		  rgb = colorClass.fetch();
+		  i = ColorClassification.findMatch(rgb);
+		  if(i!=4 ) {
+			  result = i;
+		  }
+		  ColorClassification.rotateArmToLeft(30);
+		  rgb = colorClass.fetch();
+		  i = ColorClassification.findMatch(rgb);
+		  if(i!=4 ) {
+			  result = i;
+		  }
+		  ColorClassification.rotateArmToLeft(30);
+		  rgb = colorClass.fetch();
+		  i = ColorClassification.findMatch(rgb);
+		  if(i!=4 ) {
+			  result = i;
+		  }
+		  ColorClassification.rotateArmToLeft(30);
+		  rgb = colorClass.fetch();
+		  i = ColorClassification.findMatch(rgb);
+		  if(i!=4 ) {
+			  result = i;
+		  }
+		  ColorClassification.rotateArmToLeft(30);
+		  rgb = colorClass.fetch();
+		  i = ColorClassification.findMatch(rgb);
+		  
+		  if(i!=4 ) {
+			  result = i;
+		  }
+		  if (result == targetCan) Sound.twoBeeps();
+		  else Sound.beep();
+		  
+		  
+		  ColorClassification.rotateArmToRight(180);
+		}
 
 }
 
