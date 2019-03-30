@@ -290,7 +290,7 @@ public static void main(String[] args) throws OdometerExceptions {
  * This method allows to scan the whole can and get 6 sampels to determine the colors detected it
  * will beep once if it can't find the target can it will beep twice if it can find the target can
  */
-public static void colorScan() {
+public static boolean colorScan() {
   int targetCan = targetColor;
   ColorClassification colorClass = new ColorClassification(colorSamplerSensor);
   float[] rgb;
@@ -346,6 +346,11 @@ public static void colorScan() {
   }
 
   ColorClassification.rotateArmToRight(180);
+  if (result == targetCan) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 
