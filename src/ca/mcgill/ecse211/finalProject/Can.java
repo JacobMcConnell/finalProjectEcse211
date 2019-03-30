@@ -13,7 +13,7 @@ public class Can {
   //PLEASE SOMEONE FIND THE RIGHT VALUE FOR THIS 
   private static final double distance_Factor = Main.distance_Factor_for_Cans;
 
-  private static final double USDE = Main.USDistance_Can_Equality_Radius;
+  private static final double USDistance_Can_Equality_Radius = Main.USDistance_Can_Equality_Radius;
   
   double x;
   double y; 
@@ -68,7 +68,7 @@ public class Can {
     // must make this method 
     Can minCan = null;
     double min; 
-    min =0;
+    min =1000;
     for (int i =0; i < canList.size();i++) {
       
       
@@ -78,10 +78,10 @@ public class Can {
        double eD = euclideanDistance(x,y,canI.x,canI.y);
        if (eD < min) {
         // if ()
-           if (sameCan(x,y,USDistance, canI)) {
+          // if (sameCan(x,y,USDistance, canI)) {
              min= eD;
              minCan= canI;
-           }
+           //}
         
          
          
@@ -102,7 +102,8 @@ public class Can {
   
      double howClose(double Can2x,double Can2y,double USDistance) {
       Can can1= this;
-      
+      //AAAHHA 
+      // this makes no sense 
       return USDistance;
        
      }
@@ -157,7 +158,7 @@ public class Can {
    * this method updates the cans position if necessary to be more accurate 
    * 
    * we may use some kind of waiting system with US distance or maybe just discrete 
-   * but if the cans are almost equal then take the average location for it.  
+   * but if the cans are almost equal then take the average location for it(TRYING IT WHERE IT DOES NOT DO THAT).  
    * @param x
    * @param y
    * @param USDistance
@@ -166,34 +167,34 @@ public class Can {
   public void updateCan(double x, double y, double USDistance) {
     // must make this method 
     
-    if  (USDistance < (this.closest_distance - USDE) ){
+    if  (USDistance < (this.closest_distance) ){//
       // new one is closer so just use it 
       this.x= x;
       this.y =y;
       this.closest_distance= USDistance;
-    } else if (USDistance> (this.closest_distance+ USDE)) {
+    } else if (USDistance> (this.closest_distance+ USDistance_Can_Equality_Radius)) {
       //dont update can cause it will be less accurate 
       
-    } else {
+    } else {// lets not do this lets just find the point of the can that is closest to us!!!!!!
       //around equal so take the average 
-      this.x= (this.x+ x)/2;
-      this.y= (this.y+ y)/2;
-      this.closest_distance= (this.closest_distance+ USDistance)/2;
+//      this.x= (this.x+ x)/2;
+//      this.y= (this.y+ y)/2;
+//      this.closest_distance= (this.closest_distance+ USDistance)/2;
     }
   }
   /**
-   * finds the closest can to the robots location
+   * finds the closest can unscanned can to the robots location
    * @return closest can to the robot 
    */
   public static Can getClosestCanToRobo() {
     Can minCan = null;
     double min; 
-    min =0;
+    min =10000;
     for (int i =0; i < canList.size();i++) {
       
       
       Can canI= canList.get(i);
-      
+      if (!canI.scanned) {
    
        double eD = euclideanDistance(Main.odometer.getX(),Main.odometer.getY(),canI.x,canI.y);
        if (eD < min) {
@@ -203,6 +204,7 @@ public class Can {
              minCan= canI;
            
        }
+      }
      
   }
   return minCan;

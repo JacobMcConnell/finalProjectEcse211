@@ -135,7 +135,7 @@ public class Navigation extends Thread {
    * @param x X-Coordinate
    * @param y Y-Coordinate
    */
-  public void travelToallowThreadMINUS(double x, double y,double z) {
+  public void travelToMINUS(double x, double y,double z) {
 
     current_x_pos = odometer.getXYT()[0];
     current_y_pos = odometer.getXYT()[1];
@@ -150,21 +150,23 @@ public class Navigation extends Thread {
     double hypot = Math.hypot(deltax, deltay);
 
     // Turn to the correct angle towards the endpoint
-    turnToNoWait(mTheta);
+    turnTo(mTheta);
 
     leftMotor.setSpeed(FORWARD_SPEED);
     rightMotor.setSpeed(FORWARD_SPEED);
 
     leftMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot-z), true);
-    rightMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot-z), true);
+    rightMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot-z), false);
+    /*
     try {
       Thread.sleep(500);
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    leftMotor.waitComplete();
-    rightMotor.waitComplete();
+    */
+    //leftMotor.waitComplete();
+    //rightMotor.waitComplete();
 
     // stop vehicle
     // leftMotor.stop(true);

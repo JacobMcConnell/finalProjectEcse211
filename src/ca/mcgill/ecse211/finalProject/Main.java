@@ -58,8 +58,8 @@ private static final EV3ColorSensor rightLight = new EV3ColorSensor(LocalEV3.get
 private static LightSensorCon leftLS = new LightSensorCon(leftLight,lcd);
 private static LightSensorCon rightLS = new LightSensorCon(rightLight,lcd);
 public static Navigator navigator = new Navigator(odometer,leftMotor,rightMotor);
-private static OdometryCorrection odoCorr = new OdometryCorrection(odometer,navigator,leftLS,rightLS);
-private static LightLocalizer lightLocalizer = new LightLocalizer(odometer, navigator, leftLS, rightLS);
+public static OdometryCorrection odoCorr = new OdometryCorrection(odometer,navigator,leftLS,rightLS);
+public static LightLocalizer lightLocalizer = new LightLocalizer(odometer, navigator, leftLS, rightLS);
 
 
 
@@ -85,7 +85,7 @@ static SampleProvider usDistance = ultrasonicSensor.getMode("Distance");
  
 
 
-public static final String server_IP = "192.168.2.8";
+public static final String server_IP = "192.168.2.49";
 public static final int team_NUM = 14;
 /**
  * this factor controlls how sensitive we are for deciding whether something is the same can with respect 
@@ -99,12 +99,12 @@ public static final double distance_Factor_for_Cans = 0.01;
  * in theory this should be the diameter of a can 5.5 
  * may need to be bigger in practice 
  */
-public static final double canSensitivity = 5.5;
+public static final double canSensitivity = 9.0;
 /**
  * this constant tells us whether a measurement is basically equal for the US sensor
  */
 public static final double USDistance_Can_Equality_Radius = 3;
-public static final double StoppingDistanceFromCan = 4.5;
+public static final double StoppingDistanceFromCan = 3.5;// tried 4.5
 
                                                     
 
@@ -186,7 +186,7 @@ public static int SZ_UR_x;
 public static int targetColor;
 
 
-
+public static double currentConsumption; 
 
  
 public static void main(String[] args) throws OdometerExceptions {
@@ -220,7 +220,7 @@ public static void main(String[] args) throws OdometerExceptions {
 			targetColor= 1;
 			
 			
-			USLocalizer.localizeFallingEdge();
+			// USLocalizer.localizeFallingEdge();
 			lightLocalizer.initialLocalize();
 			
 			odometer.initialize(startingCorner);
@@ -231,7 +231,7 @@ public static void main(String[] args) throws OdometerExceptions {
 			
 			
 			
-			cross_tn(TN_LL_x, TN_LL_y);
+			//cross_tn(TN_LL_x, TN_LL_y);
 			
 			
 			
@@ -239,9 +239,9 @@ public static void main(String[] args) throws OdometerExceptions {
 			
 			
 			
-			navigator.travelTo(SZ_LL_x/3, SZ_LL_y/3);
-			navigator.travelTo(2*SZ_LL_x/3, 2*SZ_LL_y/3);
-			navigator.travelTo(SZ_LL_x, SZ_LL_y);
+			//navigator.travelTo(SZ_LL_x/3, SZ_LL_y/3);
+			//navigator.travelTo(2*SZ_LL_x/3, 2*SZ_LL_y/3);
+			//navigator.travelTo(SZ_LL_x, SZ_LL_y);
 			
 			
 			navigator.travelTo(SZ_LL_x, SZ_LL_y);
@@ -259,7 +259,7 @@ public static void main(String[] args) throws OdometerExceptions {
            // Thread tlc= new Thread(LC);
            // tlc.start()
            // LC.run();
-			//FinalProjectMethods.searchForCans();
+			FinalProjectMethods.searchForCans();
 			//LocateCans.setRunning(false);
 			
 			navigator.travelTo(SZ_UR_x, SZ_UR_y);

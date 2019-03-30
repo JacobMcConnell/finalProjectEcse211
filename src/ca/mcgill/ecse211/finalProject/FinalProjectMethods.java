@@ -1,6 +1,7 @@
 package ca.mcgill.ecse211.finalProject;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import ca.mcgill.ecse211.navigation.Navigation;
 import ca.mcgill.ecse211.navigation.Navigator;
 import lejos.hardware.Sound;
@@ -54,24 +55,50 @@ public class FinalProjectMethods {
    * returns after finished 
    */
   public static void searchForCans() {
+    //Can c = new Can(75,45,10);
     //need to complete 
     int[][] waypoints= waypointsForSearch();
     int i=0; // maybe make this global to not repeat 
     for (int j=0 ; j< waypoints.length; j++) {
       
       //navigate.travelTo(waypoints[i][0],waypoints[i][1]);
+      Main.navigator.setOdoCorrection(Main.odoCorr);
       Main.navigator.travelTo(waypoints[i][0],waypoints[i][1]);
+      
       // turn 180 degres around and it should be a thead that somehow sleeps every 10 mili seconds ect 
       //Main.navigator.turnBy(90, true);
      // Main.navigator.turnBy(180, false);
+      
+      
       Main.leftMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), true);
       Main.rightMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, -90), false);
+      Main.leftMotor.setSpeed(65);
+      Main.rightMotor.setSpeed(65);
       Main.leftMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, -180), true);
       Main.rightMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, 180), true);
+     // List
+      ArrayList<double[]> data = new ArrayList<double[]>();
       while(Main.leftMotor.isMoving()) {
+        //double USDistance =LocateCans.fetchUS();
         
-        LocateCans.plain();
+        
+        
+        data.add(LocateCans.lookForACan2());
+       //maybe gives the odometer time to work  
+        try {
+          Thread.sleep(30);//probably 30 
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        
+        
+        
       }
+      int doNOthing=0;
+      doNOthing++;
+      Main.leftMotor.setSpeed(100);
+      Main.rightMotor.setSpeed(100);
       Main.leftMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), true);
       Main.rightMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, -90), false);
       /*while (Main.leftMotor.isMoving()) {
@@ -90,7 +117,8 @@ public class FinalProjectMethods {
       if (Can.numberOfUnScannedCans()>0) {
         //search for cans 
         scanCans();
-        Main.navigator.travelTo(waypoints[i][0],waypoints[i][1]);
+        Main.navigation.travelTo(waypoints[i][0], waypoints[i][1]);
+        //Main.navigator.travelTo(waypoints[i][0],waypoints[i][1]);
       }
       
       
@@ -103,43 +131,33 @@ public class FinalProjectMethods {
    * travels to and scans the cans untill no unscanned cans 
    */
     public static void scanCans() {
+     
       while (Can.numberOfUnScannedCans()>0) {
         Can closestCan=Can.getClosestCanToRobo();
-        threadTravelTo(closestCan);
+        if (closestCan!=null){
+          Main.navigation.travelToMINUS(closestCan.x, closestCan.y, Main.StoppingDistanceFromCan);
+        }
+       
         
         //scan the can
         // when we weigh the can and carry it in real version
         // make sure to turn off locate cans before 
         // and turn it on after 
-        //Sound.beep();
-        Main.colorScan();
+        Sound.beep();
+        Sound.beep();
+        Sound.beep();
+        Sound.beep();
+        //Main.colorScan(); // EROROR HERE WHY?
+        if (closestCan!=null) {
         closestCan.scanned=true;
+        }
         //for the non beta here is where we would take the can to starting square 
         
       }
       
     }
     
-    //doest work 
-    //takes us to the can while allowing us to scan it 
-    private static void threadTravelTo(Can closestCan) {
-    // TODO Auto-generated method stub
-      if (closestCan!=null) {
-      Main.navigation.travelToallowThreadMINUS(closestCan.x, closestCan.y, Main.StoppingDistanceFromCan);
-      }
-      /*
-      while(Main.leftMotor.isMoving()) {
-        try {
-          Thread.sleep(15);
-        } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        
-      }
-      */
-    
-  }
+ 
 
     /**
      * this should turn degrees to one side while allowing the scan thread to work (probably not actually 

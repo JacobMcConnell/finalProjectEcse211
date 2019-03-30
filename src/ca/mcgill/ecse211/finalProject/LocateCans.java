@@ -33,9 +33,9 @@ public class LocateCans implements Runnable {
    * 
    * @return
    */
-  private static int fetchUS() {
+  public static double fetchUS() {
     usDistance.fetchSample(usData, 0);
-    return (int) (usData[0] * 100);
+    return (double) (usData[0] * 100);
   }
   
   public void run() {
@@ -89,20 +89,21 @@ public class LocateCans implements Runnable {
     running = running1;
   }
 
-  public static void plain() {
+  public static void lookForACan() {
     // TODO Auto-generated method stub
     double USDistance = fetchUS();
     
     
     if (USDistance< MAX_SENSOR_DISTANCE) {
-      Sound.beep();
+      //Sound.beep();
+      
       double theta = Main.odometer.getAngJ();
       double roboX = Main.odometer.getX();
       double roboY = Main.odometer.getY();
       double deltaX = Math.cos(Math.toRadians(theta))*USDistance;
       double deltaY = Math.sin(Math.toRadians(theta))*USDistance;
       double canX = roboX + deltaX; 
-      double canY = roboX + deltaY;
+      double canY = roboY + deltaY;
       if (canX/30.85+1>Main.SZ_UR_x||canX/30.85+1<Main.SZ_LL_x) {
         return; 
       }
@@ -111,6 +112,7 @@ public class LocateCans implements Runnable {
       }
       
       
+      Sound.beep();
       Can can = Can.closestCan(canX,canY, USDistance);
       if ( can == null) {
         Can newCan = new Can(canX, canY, USDistance);
@@ -120,6 +122,57 @@ public class LocateCans implements Runnable {
       }
       
     }
+  }
+  
+  
+  public static double[] lookForACan2() {
+    // TODO Auto-generated method stub
+    double USDistance = fetchUS();
+    double[] returnList = new double[5];
+    returnList[2]=Main.odometer.getAngJ();
+    returnList[3]=USDistance;
+    returnList[4]=-100;
+    
+    
+    if (USDistance< MAX_SENSOR_DISTANCE) {
+      //Sound.beep();
+      
+      double theta = Main.odometer.getAngJ();
+      double roboX = Main.odometer.getX();
+      double roboY = Main.odometer.getY();
+      double deltaX = Math.cos(Math.toRadians(theta))*USDistance;
+      double deltaY = Math.sin(Math.toRadians(theta))*USDistance;
+      double canX = roboX + deltaX; 
+      double canY = roboY + deltaY;
+      returnList[0]= canX;
+      returnList[1]= canY;
+      returnList[2]=theta;
+      
+      if (canX/30.85+1>Main.SZ_UR_x||canX/30.85+1<Main.SZ_LL_x) {
+        returnList[4]=-2;
+        return returnList; 
+      }
+      if (canY/30.85+1>Main.SZ_UR_y||canY/30.85+1<Main.SZ_LL_y) {
+        returnList[4]=-3;
+        return returnList;
+      }
+      
+      returnList[4]=2;
+      Sound.beep();
+      Can can = Can.closestCan(canX,canY, USDistance);
+      if ( can == null) {
+        returnList[4]=4;
+        Can newCan = new Can(canX, canY, USDistance);
+      } else {
+        returnList[4]=3;
+        can.updateCan(canX,canY,USDistance);
+        
+      }
+      return returnList;
+      
+    }
+    
+    return returnList;
   }
   
 
