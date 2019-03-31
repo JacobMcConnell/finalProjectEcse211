@@ -66,7 +66,7 @@ public class Navigator {
 		leftMotor.stop(true);
 		rightMotor.stop(false);
 
-		Sound.beep();
+		//Sound.beep();
 	}
 	/**
 	 * A method to drive our vehicle to a certain Cartesian coordinate using 

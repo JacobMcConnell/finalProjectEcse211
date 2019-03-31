@@ -34,7 +34,11 @@ public class Main {
 	
 // Set vehicle constants
 public static final double WHEEL_RAD = 2.1;
+<<<<<<< HEAD
 public static final double TRACK = 16.2; // 9.8
+=======
+public static final double TRACK = 16.2; // 10.55
+>>>>>>> e797c26841158b61e21da6d9a45a0319ee5391bc
 public static final double TILE_SIZE = 30.48;
 public static final int SC = 0;
 public static final int CAN_TO_SENSOR = 5;
@@ -44,14 +48,14 @@ public static final double SENSOR_LENGTH = -12;
 
 
 // Motor Objects, and navigator related parameters
-private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
-private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
+static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
+public static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 
 
 private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 private static final Port usPort = LocalEV3.get().getPort("S4");
 static Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor);
-static Navigation navigation;
+static Navigation navigation = new Navigation(odometer, leftMotor, rightMotor);
 
 private static final EV3ColorSensor colorSamplerSensor = new EV3ColorSensor(LocalEV3.get().getPort("S1"));
 
@@ -59,10 +63,16 @@ private static final EV3ColorSensor leftLight = new EV3ColorSensor(LocalEV3.get(
 private static final EV3ColorSensor rightLight = new EV3ColorSensor(LocalEV3.get().getPort("S3"));
 private static LightSensorCon leftLS = new LightSensorCon(leftLight,lcd);
 private static LightSensorCon rightLS = new LightSensorCon(rightLight,lcd);
+<<<<<<< HEAD
 private static Navigator navigator = new Navigator(odometer,leftMotor,rightMotor);
 private static OdometryCorrection odoCorr = new OdometryCorrection(odometer,navigator,leftLS,rightLS);
 private static LightLocalizer lightLocalizer = new LightLocalizer(odometer,navigator,leftLS, rightLS);
 
+=======
+public static Navigator navigator = new Navigator(odometer,leftMotor,rightMotor);
+public static OdometryCorrection odoCorr = new OdometryCorrection(odometer,navigator,leftLS,rightLS);
+public static LightLocalizer lightLocalizer = new LightLocalizer(odometer, navigator, leftLS, rightLS);
+>>>>>>> e797c26841158b61e21da6d9a45a0319ee5391bc
 
 
 
@@ -88,7 +98,11 @@ static SampleProvider usDistance = ultrasonicSensor.getMode("Distance");
  
 
 
+<<<<<<< HEAD
 public static final String server_IP = "192.168.2.9";
+=======
+public static final String server_IP = "192.168.2.6";
+>>>>>>> e797c26841158b61e21da6d9a45a0319ee5391bc
 public static final int team_NUM = 14;
 /**
  * this factor controlls how sensitive we are for deciding whether something is the same can with respect 
@@ -102,11 +116,12 @@ public static final double distance_Factor_for_Cans = 0.01;
  * in theory this should be the diameter of a can 5.5 
  * may need to be bigger in practice 
  */
-public static final double canSensitivity = 5.5;
+public static final double canSensitivity = 9.0;
 /**
  * this constant tells us whether a measurement is basically equal for the US sensor
  */
 public static final double USDistance_Can_Equality_Radius = 3;
+public static final double StoppingDistanceFromCan = 3.5;// tried 4.5
 
                                                     
 
@@ -166,33 +181,38 @@ public static final double USDistance_Can_Equality_Radius = 3;
 
  
  
- static int TN_LL_x;
- static int TN_UR_x;
- static int TN_LL_y;
- static int TN_UR_y;
+ public static int TN_LL_x;
+public  static int TN_UR_x;
+public static int TN_LL_y;
+ public static int TN_UR_y;
  
  
  
-private static double TN_START_x;// this shoudl be just before it 
+static double TN_START_x;// this shoudl be just before it 
 /// thesee must be calculated as averages from TN_LL_y ect 
-private static double TN_START_y;
-private static double TN_END_y;
-private static double TN_END_x;
+public static double TN_START_y;
+static double TN_END_y;
+static double TN_END_x;
 // end of stuff to be calculated 
 public static int locate_cans_mSeconds= 50;
 public static UltrasonicPollerJ usPoller;
+public static int SZ_UR_y;
+public static int SZ_LL_y;
+public static int SZ_LL_x;
+public static int SZ_UR_x;
+public static int targetColor;
 
 
-
+public static double currentConsumption; 
 
  
-
-
 public static void main(String[] args) throws OdometerExceptions {
 	
 	
 			
-
+  
+           WiFiClass.GetWIFIinfo();
+            FinalProjectMethods.hadleProjectVariables();
 			//Odometer objects
 			//WiFiClass.GetWIFIinfo();
 			Display odometryDisplay = new Display(lcd); // No need to change
@@ -205,12 +225,42 @@ public static void main(String[] args) throws OdometerExceptions {
 			Thread odoDisplayThread = new Thread(odometryDisplay);
 			odoDisplayThread.start();
 			
+			
+			
 			USLocalizer USLocalizer = new USLocalizer(odometer, leftMotor, rightMotor, usDistance);
 			
+<<<<<<< HEAD
   			odometer.initialize(0);
 			
-			navigator.setOdoCorrection(odoCorr);
+=======
+			//navigator.travelDist(6000, 250);
 			
+            
+            
+            ///THIS IS JUST FOR THE DEMO
+			targetColor= 1000;
+			
+			
+			// USLocalizer.localizeFallingEdge();
+			lightLocalizer.initialLocalize();
+			
+			odometer.initialize(startingCorner);
+			//odometer.setXYT(30, 30, 0);
+>>>>>>> e797c26841158b61e21da6d9a45a0319ee5391bc
+			navigator.setOdoCorrection(odoCorr);
+			Sound.beep();
+			
+			
+			
+			
+			//cross_tn(TN_LL_x, TN_LL_y);
+			
+			
+			
+			
+			
+			
+<<<<<<< HEAD
 			navigator.travelTo(2, 1);
 			Sound.beep();
 			Sound.beep();
@@ -220,10 +270,30 @@ public static void main(String[] args) throws OdometerExceptions {
 			navigator.travelTo(4, 3);
 			Sound.beep();
 			Sound.beep();
-			Sound.beep();
-			Sound.beep();
-			Sound.beep();
+=======
 			
+			//navigator.travelTo(SZ_LL_x/3, SZ_LL_y/3);
+			//navigator.travelTo(2*SZ_LL_x/3, 2*SZ_LL_y/3);
+			//navigator.travelTo(SZ_LL_x, SZ_LL_y);
+			
+			
+			navigator.travelTo(SZ_LL_x, SZ_LL_y);
+			//start debugging light sensor 
+			
+			//Button.waitForAnyPress();
+			//colorScan();
+			
+			
+			//navigator.travelTo(2, 1);
+>>>>>>> e797c26841158b61e21da6d9a45a0319ee5391bc
+			Sound.beep();
+			Sound.beep();
+			Sound.beep();
+            Sound.beep();
+            Sound.beep();
+           
+			
+<<<<<<< HEAD
 //			USLocalizer.localizeFallingEdge();
 //			lightLocalizer.initialLocalize();
 //			
@@ -235,7 +305,27 @@ public static void main(String[] args) throws OdometerExceptions {
 //			
 //			
 //			cross_tn(2,2);
+=======
+			//GEt me to begining of seach space as described
+            //turn on searc for cans 
+            //LocateCans LC = new LocateCans();
+           // Thread tlc= new Thread(LC);
+           // tlc.start()
+           // LC.run();
+			FinalProjectMethods.searchForCans();
+			//LocateCans.setRunning(false);
+>>>>>>> e797c26841158b61e21da6d9a45a0319ee5391bc
 			
+			navigator.travelTo(SZ_UR_x, SZ_UR_y);
+			//navigator.travelTo(4, 3);
+			// do apropriate beeps 
+			// 5 beeps for beta demo 
+			
+			Sound.beep();
+            Sound.beep();
+            Sound.beep();
+            Sound.beep();
+            Sound.beep();
 			
 			
 			
@@ -300,6 +390,89 @@ public static void main(String[] args) throws OdometerExceptions {
 		  
 		  ColorClassification.rotateArmToRight(180);
 		}
+
+
+
+/**
+ * This method allows to scan the whole can and get 6 sampels to determine the colors detected it
+ * will beep once if it can't find the target can it will beep twice if it can find the target can
+ */
+public static boolean colorScan() {
+  int targetCan = targetColor;
+  ColorClassification colorClass = new ColorClassification(colorSamplerSensor);
+  float[] rgb;
+  int result = 4;
+  rgb = colorClass.fetch();
+  ColorClassification.rotateArmToLeft(30);
+  rgb = colorClass.fetch();
+  int i = ColorClassification.findMatch(rgb);
+  if (i != 4) {
+    result = i;
+  }
+  ColorClassification.rotateArmToLeft(30);
+  rgb = colorClass.fetch();
+  i = ColorClassification.findMatch(rgb);
+  if (i != 4) {
+    result = i;
+  }
+  ColorClassification.rotateArmToLeft(30);
+  rgb = colorClass.fetch();
+  i = ColorClassification.findMatch(rgb);
+  if (i != 4) {
+    result = i;
+  }
+  ColorClassification.rotateArmToLeft(30);
+  rgb = colorClass.fetch();
+  i = ColorClassification.findMatch(rgb);
+  if (i != 4) {
+    result = i;
+  }
+  ColorClassification.rotateArmToLeft(30);
+  rgb = colorClass.fetch();
+  i = ColorClassification.findMatch(rgb);
+  if (i != 4) {
+    result = i;
+  }
+  ColorClassification.rotateArmToLeft(30);
+  rgb = colorClass.fetch();
+  i = ColorClassification.findMatch(rgb);
+
+  if (i != 4) {
+    result = i;
+  }
+  if (result == targetCan) {
+    Sound.twoBeeps();
+    Sound.twoBeeps();
+    Sound.twoBeeps();
+    Sound.twoBeeps();
+    Sound.twoBeeps();
+  }
+  else {
+    //do nothing 
+   // Sound.beep();
+  }
+
+  ColorClassification.rotateArmToRight(180);
+  if (result == targetCan) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+
+private static void cross_tn (int x , int y) {
+  //navigator.travelTo(x-1, y-3);
+  navigator.travelTo((int)(0.5*(x-1)),(int)(0.5* y));
+  navigator.travelTo(x-1, y);
+  
+  navigator.turnTo(0);
+  navigator.travelDist(15, 200);
+  navigator.turnTo(90);
+  navigator.travelDist(4*TILE_SIZE, 300);
+}
+
 
 }
 

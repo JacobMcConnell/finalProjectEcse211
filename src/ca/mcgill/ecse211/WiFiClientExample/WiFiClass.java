@@ -113,6 +113,6 @@ public class WiFiClass {
     }
 
     // Wait until user decides to end program
-    Button.waitForAnyPress();
+   // Button.waitForAnyPress(); ///!!!!!!!!!!! we have to wait to start the programm!!!!!!!!!!
   }
 }
