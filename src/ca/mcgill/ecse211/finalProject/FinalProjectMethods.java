@@ -15,6 +15,9 @@ import lejos.hardware.ev3.LocalEV3;
  */
 
 public class FinalProjectMethods {
+  private static double lastDirection;
+  private static boolean justHandledCan=false;
+
   /**
    * this method should cause the robot to grab and lift the can and hold it up. It should return when complete. 
    */
@@ -92,6 +95,11 @@ public class FinalProjectMethods {
       //navigate.travelTo(waypoints[i][0],waypoints[i][1]);
       Main.navigator.setOdoCorrection(Main.odoCorr);
       Main.navigator.travelTo(waypoints[i][0],waypoints[i][1]);
+      if(justHandledCan) {
+        Main.navigator.turnTo(lastDirection);
+        justHandledCan=false;
+      }
+      lastDirection= Main.odometer.getAng();
       
       // turn 180 degres around and it should be a thead that somehow sleeps every 10 mili seconds ect 
       //Main.navigator.turnBy(90, true);
@@ -147,8 +155,10 @@ public class FinalProjectMethods {
       Main.leftMotor.setSpeed(100);
       Main.rightMotor.setSpeed(100);
       if (minPoint!=null) {
+     
       Main.navigation.travelToMINUS(minPoint[0], minPoint[1], Main.StoppingDistanceFromCan);
       HandleCan();
+      justHandledCan=true;
       i--;
       
       
@@ -189,7 +199,7 @@ public class FinalProjectMethods {
       
       
       
-      i++;
+      
     }
   }
   /**
@@ -220,15 +230,25 @@ public class FinalProjectMethods {
       //light localize mayber???
       // travel across bridge 
       //Main.navigator.travelTo(Main.SZ_LL_x,Main.SZ_LL_y);
+      Sound.beep();
+      Sound.beep();
+      Sound.beep();
+      Sound.beep();
+      Sound.beep();
+      Sound.beep();
       
     } else {
-      Navigation.travelToFP(Main.SZ_LL_x, Main.SZ_LL_y);
+      Main.navigator.directTravelTo(Main.SZ_LL_x, Main.SZ_LL_y);
       Main.navigator.travelTo(Main.SZ_LL_x-1, Main.SZ_LL_y+1);
       openGrabber(150);
+      ColorClassification.rotateArmToRight(90);
       //ideally more elegant way to go backwards than this 
-      Main.leftMotor.rotate(360,true);
-      Main.rightMotor.rotate(360,false);
-      Navigation.travelToFP(Main.SZ_LL_x, Main.SZ_LL_y);
+      Main.leftMotor.rotate(-360,true);
+      Main.rightMotor.rotate(-360,false);
+      Main.navigator.directTravelTo(Main.SZ_LL_x, Main.SZ_LL_y);
+     // Main.navigation.turnToJ(90);
+      Main.navigator.turnTo(90);
+     ///Main.navigator.turnTo();l
     }
     
     //deal with the result of heavy / not heavy ect.
@@ -286,11 +306,11 @@ public class FinalProjectMethods {
   private static boolean pointInSearchZone(double canX, double canY) {
     // TODO Auto-generated method stub
     
-    if (canX/30.85+1>Main.SZ_UR_x||canX/30.85+1<Main.SZ_LL_x) {
+    if ((canX/30.85>Main.SZ_UR_x)||(canX/30.85<Main.SZ_LL_x)) {
       
       return false; 
     }
-    if (canY/30.85+1>Main.SZ_UR_y||canY/30.85+1<Main.SZ_LL_y) {
+    if ((canY/30.85>Main.SZ_UR_y)||(canY/30.85<Main.SZ_LL_y)) {
      
       return false;
     }

@@ -85,7 +85,7 @@ static SampleProvider usDistance = ultrasonicSensor.getMode("Distance");
  
 
 
-public static final String server_IP = "192.168.2.49";
+public static final String server_IP = "192.168.2.6";
 public static final int team_NUM = 14;
 /**
  * this factor controlls how sensitive we are for deciding whether something is the same can with respect 
@@ -217,7 +217,7 @@ public static void main(String[] args) throws OdometerExceptions {
             
             
             ///THIS IS JUST FOR THE DEMO
-			targetColor= 1;
+			targetColor= 1000;
 			
 			
 			// USLocalizer.localizeFallingEdge();
@@ -245,6 +245,12 @@ public static void main(String[] args) throws OdometerExceptions {
 			
 			
 			navigator.travelTo(SZ_LL_x, SZ_LL_y);
+			//start debugging light sensor 
+			
+			//Button.waitForAnyPress();
+			//colorScan();
+			
+			
 			//navigator.travelTo(2, 1);
 			Sound.beep();
 			Sound.beep();
