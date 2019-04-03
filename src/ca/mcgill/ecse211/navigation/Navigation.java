@@ -130,10 +130,11 @@ public class Navigation extends Thread {
   
   
   /**
-   * A method to drive our vehicle to a distance z from a Cartesian coordinate but does not wait to return
+   * A method to drive our vehicle to a distance z from a Cartesian coordinate it does wait to return 
    * 
    * @param x X-Coordinate
    * @param y Y-Coordinate
+   * @author jacobmcconnell
    */
   public void travelToMINUS(double x, double y,double z) {
 
@@ -157,20 +158,7 @@ public class Navigation extends Thread {
 
     leftMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot-z), true);
     rightMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot-z), false);
-    /*
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    */
-    //leftMotor.waitComplete();
-    //rightMotor.waitComplete();
-
-    // stop vehicle
-    // leftMotor.stop(true);
-    // rightMotor.stop(true);
+   
   }
   /**
    * turns by the amount specified without waiting 
@@ -316,17 +304,17 @@ public class Navigation extends Thread {
   public static int convertAngle(double radius, double width, double angle) {
     return convertDistance(radius, Math.PI * width * angle / 360.0);
   }
-  
-  
   /**
-   * This performs navigation using the coordinate system for the final project 
+   * travel to final project travels without odo correction to the cartiesian coordinates 
+   * specified in the final projects coordinate system 
+   * takes doubles as input
    * @param x
    * @param y
-   * 
    */
-  public static void travelToFP(double x, double y) {
-    // this needs to be filled in
-    
-    
+  public void travelToFP(double x, double y) {
+    this.travelTo(x*30.48,y*30.48);
   }
+  
+  
+  
 }

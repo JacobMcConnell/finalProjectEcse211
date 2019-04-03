@@ -327,7 +327,7 @@ public class Navigator {
 	public void travelDist(double distance,int speed) {
 
 		resetMotors();
-		setSpeeds(speed-10,speed);
+		setSpeeds(speed,speed);
 		leftMotor.rotate(convertDistance(WHEEL_RAD, distance), true);
 		rightMotor.rotate(convertDistance(WHEEL_RAD, distance), false);
 	}

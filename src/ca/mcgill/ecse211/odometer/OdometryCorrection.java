@@ -59,7 +59,7 @@ public class OdometryCorrection {
 	 */
 	public void correct(double corrTheta) {
 
-		navigator.travelDist(-7,150);
+		navigator.travelDist(-1,150);
 
 		navigator.moveForward();
 

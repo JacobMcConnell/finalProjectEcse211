@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import ca.mcgill.ecse211.colorClassification.ColorClassification;
 import ca.mcgill.ecse211.navigation.Navigation;
 import ca.mcgill.ecse211.navigation.Navigator;
+import ca.mcgill.ecse211.navigation.TN_navigator;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 
@@ -15,15 +16,11 @@ import lejos.hardware.ev3.LocalEV3;
  */
 
 public class FinalProjectMethods {
+  private static final int grabberConstant = 85;
   private static double lastDirection;
   private static boolean justHandledCan=false;
 
-  /**
-   * this method should cause the robot to grab and lift the can and hold it up. It should return when complete. 
-   */
-  public static void liftCan() {
-    //method must be finished 
-  }
+ 
   
   /**
    * this method should put the can down. it should return when  compleated. 
@@ -46,6 +43,17 @@ public class FinalProjectMethods {
    * 
    */
   public static void returnCanToStartingSquare() {
+    
+  }
+  
+  /**
+   * takes us back throught the tunnel it does not use odometry correction 
+   */
+  public static void goBackThroughTunnel() {
+    Main.navigation.travelToFP(Main.TN_END_x, Main.TN_END_y);
+    Main.navigation.travelToFP(Main.TN_START_x, Main.TN_START_y);
+    Main.navigator.travelDist(5, 50);
+    
     
   }
   /**
@@ -82,8 +90,11 @@ public class FinalProjectMethods {
   
   
   /**
-   * tells the robot to travel around search area and and turn so that the search thread sees the cans 
-   * returns after finished 
+   * tells the robot to travel around search area and search for cans
+   * It is the bulk of the search algorithm. We just follow a snake pattern and turn to find the cans. when a can is found
+   * go to it. Scan it. Take it either to the starting position or outside of the search zone. then return to the search zone 
+   * and return to the last position in the snake and begin scanning for cans at that position again. 
+   * _BULK OF THE SEARCH ALGORITHM
    */
   public static void searchForCans() {
     //Can c = new Can(75,45,10);
@@ -114,11 +125,14 @@ public class FinalProjectMethods {
       Main.rightMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, 180), true);
      // List
       //ArrayList<double[]> data = new ArrayList<double[]>();
-      double minDistance=100;
+      double minDistance=30;
       double minAngle=0; 
       double[] minPoint= null;
       while(Main.leftMotor.isMoving()) {
-        double USDistance =LocateCans.fetchUS();
+        float[] sample = new float[Main.usDistance.sampleSize()];
+        Main.usDistance.fetchSample(sample, 0);
+        double USDistance = sample[0]*100;
+           // LocateCans.fetchUS();
         if (USDistance<minDistance) {
           double angle=Main.odometer.getAngJ();
           double x = Main.odometer.getX();
@@ -164,39 +178,6 @@ public class FinalProjectMethods {
       
       }
       
-      // no point to this 
-      /*
-      Main.leftMotor.setSpeed(100);
-      Main.rightMotor.setSpeed(100);
-      Main.leftMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), true);
-      Main.rightMotor.rotate(Navigation.convertAngle(Main.WHEEL_RAD, Main.TRACK, -90), false);
-      */
-      
-      
-      
-      /*while (Main.leftMotor.isMoving()) {
-        try {
-          Thread.sleep(500);
-        } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        
-      }
-      */
-      //Main.navigator.turnBy(90, true);
-      //threadSafeTurn(90);
-      //threadSafeTurn(180);
-      
-      /*
-      if (Can.numberOfUnScannedCans()>0) {
-        //search for cans 
-        scanCans();
-        Main.navigation.travelTo(waypoints[i][0], waypoints[i][1]);
-        //Main.navigator.travelTo(waypoints[i][0],waypoints[i][1]);
-      }
-      */
-      
       
       
       
@@ -210,37 +191,45 @@ public class FinalProjectMethods {
    */
   private static void HandleCan() {
     // TODO Auto-generated method stub
-    closeGrabber(75);
+    closeGrabber(70);
    
-    boolean ourColor =Main.colorScan();
+    int canColor =Main.colorScan();
     ColorClassification.rotateArmToLeft(90);
-    openGrabber(75);
-    closeGrabber(150);// use this to do weight and apropriate beeps
+    openGrabber(70);
+    boolean heavy =closeGrabber(grabberConstant);// use this to do weight and apropriate beeps
     //deal with the result of heavy / not heavy ect.
-    if (ourColor) {
+    
+    for (int i =0; i <=canColor;i++) {
+      if(heavy) {
+        Sound.buzz();//long beep?
+      } else {
+        Sound.beep();
+      }
+    }
+    if (canColor==Main.targetColor) {
       // take it to our starting point 
-      Navigation.travelToFP(Main.SZ_LL_x, Main.SZ_LL_y);
-      //ASK ERDONG TO DO THIS GO ACCROSS BRIDGE 
-      //return to starting point
-      // let go of can 
-      // backup a bit 
-          //Main.leftMotor.rotate(360,true);
-          // Main.rightMotor.rotate(360,false);
-      // 
-      //light localize mayber???
-      // travel across bridge 
-      //Main.navigator.travelTo(Main.SZ_LL_x,Main.SZ_LL_y);
-      Sound.beep();
-      Sound.beep();
-      Sound.beep();
-      Sound.beep();
-      Sound.beep();
-      Sound.beep();
+     
+      Main.navigator.directTravelTo(Main.SZ_LL_x, Main.SZ_LL_y);
+     // this is hacky but its what i have 
+      goBackThroughTunnel();
+     
+      Main.tn_navigator.travelToStartingPoint();
+      openGrabber(grabberConstant);
+      ColorClassification.rotateArmToRight(90);
+      //ideally more elegant way to go backwards than this 
+      Main.leftMotor.rotate(-360,true);
+      Main.rightMotor.rotate(-360,false);
+      Main.tn_navigator.travelToTunnel();
+      Main.tn_navigator.travelThroughTunnel();
+      Main.tn_navigator.travelTostartSet();
+      Main.navigator.turnTo(90);
+      
+    
       
     } else {
       Main.navigator.directTravelTo(Main.SZ_LL_x, Main.SZ_LL_y);
       Main.navigator.travelTo(Main.SZ_LL_x-1, Main.SZ_LL_y+1);
-      openGrabber(150);
+      openGrabber(grabberConstant);
       ColorClassification.rotateArmToRight(90);
       //ideally more elegant way to go backwards than this 
       Main.leftMotor.rotate(-360,true);
@@ -261,8 +250,9 @@ public class FinalProjectMethods {
    * turn medium motor
    * 
    * @param degrees to turn right
+   * @return 
    */
-  public static void closeGrabber(int degrees) {
+  public static boolean closeGrabber(int degrees) {
     
     Main.grabMotor.setAcceleration(750);
     Main.grabMotor.setSpeed(100);
@@ -271,7 +261,7 @@ public class FinalProjectMethods {
     
     
     Main.grabMotor.setSpeed(0);
- 
+    return false;// THIS NEEDS TO BE COMPLEATED 
 
   }
   
@@ -317,35 +307,7 @@ public class FinalProjectMethods {
     return true;
   }
 
-  /**
-   * travels to and scans the cans untill no unscanned cans 
-   */
-    public static void scanCans() {
-     
-      while (Can.numberOfUnScannedCans()>0) {
-        Can closestCan=Can.getClosestCanToRobo();
-        if (closestCan!=null){
-          Main.navigation.travelToMINUS(closestCan.x, closestCan.y, Main.StoppingDistanceFromCan);
-        }
-       
-        
-        //scan the can
-        // when we weigh the can and carry it in real version
-        // make sure to turn off locate cans before 
-        // and turn it on after 
-        Sound.beep();
-        Sound.beep();
-        Sound.beep();
-        Sound.beep();
-        //Main.colorScan(); // EROROR HERE WHY?
-        if (closestCan!=null) {
-        closestCan.scanned=true;
-        }
-        //for the non beta here is where we would take the can to starting square 
-        
-      }
-      
-    }
+ 
     
  
 

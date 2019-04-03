@@ -12,6 +12,7 @@ import ca.mcgill.ecse211.localization.LightLocalizer;
 import ca.mcgill.ecse211.localization.USLocalizer;
 import ca.mcgill.ecse211.navigation.Navigation;
 import ca.mcgill.ecse211.navigation.Navigator;
+import ca.mcgill.ecse211.navigation.TN_navigator;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import ca.mcgill.ecse211.odometer.OdometryCorrection;
@@ -44,7 +45,7 @@ public static final double SENSOR_LENGTH = -12;
 // Motor Objects, and navigator related parameters
 static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 public static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
-
+private static WiFiClass wifi=new WiFiClass();
 
 private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 private static final Port usPort = LocalEV3.get().getPort("S4");
@@ -60,6 +61,7 @@ private static LightSensorCon rightLS = new LightSensorCon(rightLight,lcd);
 public static Navigator navigator = new Navigator(odometer,leftMotor,rightMotor);
 public static OdometryCorrection odoCorr = new OdometryCorrection(odometer,navigator,leftLS,rightLS);
 public static LightLocalizer lightLocalizer = new LightLocalizer(odometer, navigator, leftLS, rightLS);
+public static TN_navigator tn_navigator = new TN_navigator(odometer, navigator, wifi);
 
 
 
@@ -85,7 +87,7 @@ static SampleProvider usDistance = ultrasonicSensor.getMode("Distance");
  
 
 
-public static final String server_IP = "192.168.2.6";
+public static final String server_IP = "192.168.2.12";
 public static final int team_NUM = 14;
 /**
  * this factor controlls how sensitive we are for deciding whether something is the same can with respect 
@@ -104,7 +106,7 @@ public static final double canSensitivity = 9.0;
  * this constant tells us whether a measurement is basically equal for the US sensor
  */
 public static final double USDistance_Can_Equality_Radius = 3;
-public static final double StoppingDistanceFromCan = 3.5;// tried 4.5
+public static final double StoppingDistanceFromCan = 3.5;// tried 4.5 maybe try 3.4 
 
                                                     
 
@@ -217,46 +219,36 @@ public static void main(String[] args) throws OdometerExceptions {
             
             
             ///THIS IS JUST FOR THE DEMO
-			targetColor= 1000;
+			targetColor= 3;
 			
 			
-			// USLocalizer.localizeFallingEdge();
+			 USLocalizer.localizeFallingEdge();
 			lightLocalizer.initialLocalize();
 			
-			odometer.initialize(startingCorner);
+			odometer.initialize(wifi.getStartingCorner(wifi.getTeam()));
+			
+			//needed for final demo !!!
+			//Sound.beep();
+			//Sound.beep();
+			//Sound.beep();
+			
+			
+			
 			//odometer.setXYT(30, 30, 0);
 			navigator.setOdoCorrection(odoCorr);
-			Sound.beep();
+			tn_navigator.setOdoCorrection(odoCorr);
+			tn_navigator.travelToTunnel();
+			tn_navigator.travelThroughTunnel();
+			tn_navigator.travelTostartSet();
+			
+			//for final demo 
+			//Sound.beep();
+			//Sound.beep();
+			//Sound.beep();
 			
 			
-			
-			
-			//cross_tn(TN_LL_x, TN_LL_y);
-			
-			
-			
-			
-			
-			
-			
-			//navigator.travelTo(SZ_LL_x/3, SZ_LL_y/3);
-			//navigator.travelTo(2*SZ_LL_x/3, 2*SZ_LL_y/3);
-			//navigator.travelTo(SZ_LL_x, SZ_LL_y);
-			
-			
-			navigator.travelTo(SZ_LL_x, SZ_LL_y);
-			//start debugging light sensor 
-			
-			//Button.waitForAnyPress();
-			//colorScan();
-			
-			
-			//navigator.travelTo(2, 1);
-			Sound.beep();
-			Sound.beep();
-			Sound.beep();
-            Sound.beep();
-            Sound.beep();
+		
+
            
 			
 			//GEt me to begining of seach space as described
@@ -296,7 +288,7 @@ public static void main(String[] args) throws OdometerExceptions {
  * This method allows to scan the whole can and get 6 sampels to determine the colors detected it
  * will beep once if it can't find the target can it will beep twice if it can find the target can
  */
-public static boolean colorScan() {
+public static int colorScan() {
   int targetCan = targetColor;
   ColorClassification colorClass = new ColorClassification(colorSamplerSensor);
   float[] rgb;
@@ -339,24 +331,11 @@ public static boolean colorScan() {
   if (i != 4) {
     result = i;
   }
-  if (result == targetCan) {
-    Sound.twoBeeps();
-    Sound.twoBeeps();
-    Sound.twoBeeps();
-    Sound.twoBeeps();
-    Sound.twoBeeps();
-  }
-  else {
-    //do nothing 
-   // Sound.beep();
-  }
+ 
 
-  ColorClassification.rotateArmToRight(180);
-  if (result == targetCan) {
-    return true;
-  } else {
-    return false;
-  }
+  ColorClassification.rotateArmToRight(180); // may be able to get rid later for efficiency 
+  return result;
+ 
 }
 
 
