@@ -1,9 +1,6 @@
 package ca.mcgill.ecse211.navigation;
 
-import ca.mcgill.ecse211.finalProject.LightSensorCon;
 import ca.mcgill.ecse211.navigation.Navigator;
-import ca.mcgill.ecse211.finalProject.Team;
-import ca.mcgill.ecse211.WiFiClientExample.WiFiClass;
 import ca.mcgill.ecse211.finalProject.*;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;

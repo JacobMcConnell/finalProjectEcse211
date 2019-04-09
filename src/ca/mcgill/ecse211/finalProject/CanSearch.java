@@ -15,36 +15,16 @@ import lejos.hardware.ev3.LocalEV3;
  *
  */
 
-public class FinalProjectMethods {
+public class CanSearch {
   private static final int grabberConstant = 85;
   private static double lastDirection;
   private static boolean justHandledCan=false;
 
  
   
-  /**
-   * this method should put the can down. it should return when  compleated. 
-   */
-  public static void putCanDown() {
-    
-  }
+ 
   
-  /**
-   * this method tells us if all the cans of our color have been moved to our starting spot
-   * @return true if all the cans of our color are in our starting spot 
-   */
-  public static boolean allCansOfOurColorGrabbed() {
-    // needs to be finished 
-    return false;
-  }
-  /**
-   * intructs the robot to return to the starting square (either it retreats its steps or it checks for obstical avoidance
-   * which may require a navigation that has obstical avoidance!!!) 
-   * 
-   */
-  public static void returnCanToStartingSquare() {
-    
-  }
+
   
   /**
    * takes us back throught the tunnel it does not use odometry correction 
@@ -56,12 +36,7 @@ public class FinalProjectMethods {
     
     
   }
-  /**
-   * tells the robot to navigate to the nearest search corner. 
-   */
-  public static void takeRobotToNearestSearchCorner() {
-    
-  }
+
   
   /**
    * This method takes and angle a position and a distance to find the new cartiesian point of the distance at the angle from the 
@@ -72,7 +47,7 @@ public class FinalProjectMethods {
    * @param USDistance
    * @return an array of two doubles representing the location of the new point
    */
-  static double[] getXY(double angle,double x, double y, double USDistance) {
+  private static double[] getXY(double angle,double x, double y, double USDistance) {
     double[] point = new double[2];
     double theta = angle;
     double roboX = x;
@@ -151,7 +126,7 @@ public class FinalProjectMethods {
         }
         
         
-        //data.add(LocateCans.lookForACan2());
+        
        //maybe gives the odometer time to work  
         try {
           Thread.sleep(30);//probably 30 
@@ -163,8 +138,7 @@ public class FinalProjectMethods {
         
         
       }
-      int doNOthing=0;
-      doNOthing++;
+     
       
       Main.leftMotor.setSpeed(100);
       Main.rightMotor.setSpeed(100);
@@ -196,8 +170,11 @@ public class FinalProjectMethods {
     int canColor =Main.colorScan();
     ColorClassification.rotateArmToLeft(90);
     openGrabber(70);
-    boolean heavy =closeGrabber(grabberConstant);// use this to do weight and apropriate beeps
-    //deal with the result of heavy / not heavy ect.
+    boolean heavy = WeightMeasurment.isHeavy();
+        ;// replace false with a call to weight measuremnt class
+    //return to previous position for grabbefr 
+    closeGrabber(grabberConstant);
+    
     
     for (int i =0; i <=canColor;i++) {
       if(heavy) {
@@ -252,7 +229,7 @@ public class FinalProjectMethods {
    * @param degrees to turn right
    * @return 
    */
-  public static boolean closeGrabber(int degrees) {
+  public static void closeGrabber(int degrees) {
     
     Main.grabMotor.setAcceleration(750);
     Main.grabMotor.setSpeed(100);
@@ -261,7 +238,7 @@ public class FinalProjectMethods {
     
     
     Main.grabMotor.setSpeed(0);
-    return false;// THIS NEEDS TO BE COMPLEATED 
+    // THIS NEEDS TO BE COMPLEATED 
 
   }
   
@@ -309,116 +286,15 @@ public class FinalProjectMethods {
 
  
     
+    
+    
+  
  
-
-    /**
-     * this should turn degrees to one side while allowing the scan thread to work (probably not actually 
-     * safe) DOES NOT WORK SHOULD BE THROWN OUT
-     * @param degrees
-     * 
-     */
-    public static void threadSafeTurn(double degrees) {
-      Main.navigation.turnToNoWait(degrees);
-      while (Main.leftMotor.isMoving()) {
-        try {
-          Thread.sleep(30);
-        } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
-      
-      
-    }
-    
-    
-    
-    
-   
-    
-    
-    
-    
-    
-  
-  
   /**
-   * handles the project variables 
-   * 
+   * This generates a list of points in an S pattern in the search zone. 
+   * @return 2d array of points in the search zone 
    */
-  public static void hadleProjectVariables() {
-    
- // setting all our variables depending on our team 
-    if (Main.RedTeam==14) {
-      //Main.targetColor= 3;
-      Main.startingCorner= Main.redCorner;
-      Main.SZ_UR_y= Main.SZR_UR_y;
-      Main.SZ_LL_y= Main.SZR_LL_y;
-      Main.SZ_LL_x= Main.SZR_LL_x;
-      Main.SZ_UR_x = Main.SZR_UR_x;
-      
-      
-      Main.TN_LL_x = Main.TNR_LL_x;
-      Main.TN_UR_x = Main.TNR_UR_x;
-      Main.TN_LL_y = Main.TNR_LL_y;
-      Main.TN_UR_y= Main.TNR_UR_y;
-      
-      if (Math.abs(Main.TN_LL_x-Main.TN_UR_x)<1.1) {
-        // then the tunnel is verticle 
-        Main.TN_START_x= (Main.TN_LL_x+Main.TN_UR_x)/2;
-        Main.TN_START_y= Main.TN_LL_y;
-        Main.TN_END_x= (Main.TN_LL_x+Main.TN_UR_x)/2;
-        Main.TN_END_y = Main.TN_UR_y; 
-        
-      } else {
-        // the tunnel is horizontal 
-        Main.TN_START_x = Main.TN_LL_x; 
-        Main.TN_START_y= (Main.TN_LL_y+Main.TN_UR_y)/2;
-        Main.TN_END_x= Main.TN_UR_x;
-        Main.TN_END_y= (Main.TN_LL_y+Main.TN_UR_y)/2;
-        
-      }
-      
-      
-      
-      
-      
-    } else {
-      Main.targetColor= 1;
-      Main.startingCorner=Main.greenCorner;
-      Main.SZ_UR_y= Main.SZG_UR_y;
-      Main.SZ_LL_y= Main.SZG_LL_y;
-      Main.SZ_LL_x= Main.SZG_LL_x;
-      Main.SZ_UR_x = Main.SZG_UR_x;
-      
-      
-      Main.TN_LL_x = Main.TNG_LL_x;
-      Main.TN_UR_x = Main.TNG_UR_x;
-      Main.TN_LL_y = Main.TNG_LL_y;
-      Main.TN_UR_y= Main.TNG_UR_y;
-      
-      
-      
-      if (Math.abs(Main.TN_LL_x-Main.TN_UR_x)<1.1) {
-        // then the tunnel is verticle 
-        Main.TN_START_x= (Main.TN_LL_x+Main.TN_UR_x)/2;
-        Main.TN_START_y= Main.TN_LL_y;
-        Main.TN_END_x= (Main.TN_LL_x+Main.TN_UR_x)/2;
-        Main.TN_END_y = Main.TN_UR_y; 
-        
-      } else {
-        // the tunnel is horizontal 
-        Main.TN_START_x = Main.TN_LL_x; 
-        Main.TN_START_y= (Main.TN_LL_y+Main.TN_UR_y)/2;
-        Main.TN_END_x= Main.TN_UR_x;
-        Main.TN_END_y= (Main.TN_LL_y+Main.TN_UR_y)/2;
-        
-      }
-    }
-    
-  }
-  
-  public static int[][] waypointsForSearch(){
+  private static int[][] waypointsForSearch(){
     int width= Main.SZ_UR_x-Main.SZ_LL_x+1;
     int height = Main.SZ_UR_y - Main.SZ_LL_y+1;
     int [][] waypoints= new int[width*height][2]; 

@@ -1,10 +1,8 @@
-package ca.mcgill.ecse211.WiFiClientExample;
+package ca.mcgill.ecse211.finalProject;
 
 import java.util.Map;
 
 import ca.mcgill.ecse211.WiFiClient.WifiConnection;
-import ca.mcgill.ecse211.finalProject.Team;
-import ca.mcgill.ecse211.finalProject.Main;
 import lejos.hardware.Button;
 
 /**
@@ -108,6 +106,87 @@ public class WiFiClass {
     // Wait until user decides to end program
    // Button.waitForAnyPress();
   }
+  
+  
+  
+  
+  
+  /**
+   * handles the project variables 
+   * 
+   */
+  public static void hadleProjectVariables() {
+    
+ // setting all our variables depending on our team 
+    if (Main.RedTeam==14) {
+      //Main.targetColor= 3;
+      Main.startingCorner= Main.redCorner;
+      Main.SZ_UR_y= Main.SZR_UR_y;
+      Main.SZ_LL_y= Main.SZR_LL_y;
+      Main.SZ_LL_x= Main.SZR_LL_x;
+      Main.SZ_UR_x = Main.SZR_UR_x;
+      
+      
+      Main.TN_LL_x = Main.TNR_LL_x;
+      Main.TN_UR_x = Main.TNR_UR_x;
+      Main.TN_LL_y = Main.TNR_LL_y;
+      Main.TN_UR_y= Main.TNR_UR_y;
+      
+      if (Math.abs(Main.TN_LL_x-Main.TN_UR_x)<1.1) {
+        // then the tunnel is verticle 
+        Main.TN_START_x= (Main.TN_LL_x+Main.TN_UR_x)/2;
+        Main.TN_START_y= Main.TN_LL_y;
+        Main.TN_END_x= (Main.TN_LL_x+Main.TN_UR_x)/2;
+        Main.TN_END_y = Main.TN_UR_y; 
+        
+      } else {
+        // the tunnel is horizontal 
+        Main.TN_START_x = Main.TN_LL_x; 
+        Main.TN_START_y= (Main.TN_LL_y+Main.TN_UR_y)/2;
+        Main.TN_END_x= Main.TN_UR_x;
+        Main.TN_END_y= (Main.TN_LL_y+Main.TN_UR_y)/2;
+        
+      }
+      
+      
+      
+      
+      
+    } else {
+      Main.targetColor= 1;
+      Main.startingCorner=Main.greenCorner;
+      Main.SZ_UR_y= Main.SZG_UR_y;
+      Main.SZ_LL_y= Main.SZG_LL_y;
+      Main.SZ_LL_x= Main.SZG_LL_x;
+      Main.SZ_UR_x = Main.SZG_UR_x;
+      
+      
+      Main.TN_LL_x = Main.TNG_LL_x;
+      Main.TN_UR_x = Main.TNG_UR_x;
+      Main.TN_LL_y = Main.TNG_LL_y;
+      Main.TN_UR_y= Main.TNG_UR_y;
+      
+      
+      
+      if (Math.abs(Main.TN_LL_x-Main.TN_UR_x)<1.1) {
+        // then the tunnel is verticle 
+        Main.TN_START_x= (Main.TN_LL_x+Main.TN_UR_x)/2;
+        Main.TN_START_y= Main.TN_LL_y;
+        Main.TN_END_x= (Main.TN_LL_x+Main.TN_UR_x)/2;
+        Main.TN_END_y = Main.TN_UR_y; 
+        
+      } else {
+        // the tunnel is horizontal 
+        Main.TN_START_x = Main.TN_LL_x; 
+        Main.TN_START_y= (Main.TN_LL_y+Main.TN_UR_y)/2;
+        Main.TN_END_x= Main.TN_UR_x;
+        Main.TN_END_y= (Main.TN_LL_y+Main.TN_UR_y)/2;
+        
+      }
+    }
+    
+  }
+  
 
 	/**
 	 * Stores all the data sent by the server JAR file into a Map object.

@@ -3,8 +3,7 @@ package ca.mcgill.ecse211.finalProject;
 
 import java.text.DecimalFormat;
 
-import ca.mcgill.ecse211.USPoller.UltrasonicPollerJ;
-import ca.mcgill.ecse211.WiFiClientExample.WiFiClass;
+//import ca.mcgill.ecse211.USPoller.UltrasonicPollerJ;
 import ca.mcgill.ecse211.colorClassification.ColorClassification;
 import ca.mcgill.ecse211.finalProject.LightSensorCon;
 import ca.mcgill.ecse211.finalProject.Display;
@@ -180,7 +179,7 @@ static double TN_END_y;
 static double TN_END_x;
 // end of stuff to be calculated 
 public static int locate_cans_mSeconds= 50;
-public static UltrasonicPollerJ usPoller;
+//public static UltrasonicPollerJ usPoller;
 public static int SZ_UR_y;
 public static int SZ_LL_y;
 public static int SZ_LL_x;
@@ -196,8 +195,8 @@ public static void main(String[] args) throws OdometerExceptions {
 	
 			
   
-           WiFiClass.GetWIFIinfo();
-            FinalProjectMethods.hadleProjectVariables();
+            WiFiClass.GetWIFIinfo();
+            WiFiClass.hadleProjectVariables();
 			//Odometer objects
 			
 			Display odometryDisplay = new Display(lcd); // No need to change
@@ -257,7 +256,7 @@ public static void main(String[] args) throws OdometerExceptions {
            // Thread tlc= new Thread(LC);
            // tlc.start()
            // LC.run();
-			FinalProjectMethods.searchForCans();
+			CanSearch.searchForCans();
 			//LocateCans.setRunning(false);
 			
 			navigator.travelTo(SZ_UR_x, SZ_UR_y);
