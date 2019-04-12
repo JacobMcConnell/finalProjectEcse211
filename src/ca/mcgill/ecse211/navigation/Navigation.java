@@ -3,7 +3,7 @@ package ca.mcgill.ecse211.navigation;
 /**
  * Navigation.java This class is used for navigating the robot (without obstacles)
  * 
- * NOTE FROM JACOB: this needs to be updated so that it can handle obstacles well 
+ * NOTE FROM JACOB: this needs to be updated so that it can handle obstacles well
  * 
  * @author Erdong Luo
  * @author Lara Ghanem
@@ -47,13 +47,6 @@ public class Navigation extends Thread {
 
   // main run method for navigation
   public void run() {
-
-
-
-    /*
-     * travelTo(0.0, 2.0 ); travelTo(1.0,1.0 ); travelTo(2.0,2.0 ); travelTo(2.0,1.0);
-     * travelTo(1.0,0.0);
-     */
 
 
 
@@ -127,16 +120,17 @@ public class Navigation extends Thread {
     // leftMotor.stop(true);
     // rightMotor.stop(true);
   }
-  
-  
+
+
   /**
-   * A method to drive our vehicle to a distance z from a Cartesian coordinate it does wait to return 
+   * A method to drive our vehicle to a distance z from a Cartesian coordinate it does wait to
+   * return
    * 
    * @param x X-Coordinate
    * @param y Y-Coordinate
    * @author jacobmcconnell
    */
-  public void travelToMINUS(double x, double y,double z) {
+  public void travelToMINUS(double x, double y, double z) {
 
     current_x_pos = odometer.getXYT()[0];
     current_y_pos = odometer.getXYT()[1];
@@ -156,17 +150,19 @@ public class Navigation extends Thread {
     leftMotor.setSpeed(FORWARD_SPEED);
     rightMotor.setSpeed(FORWARD_SPEED);
 
-    leftMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot-z), true);
-    rightMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot-z), false);
-   
+    leftMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot - z), true);
+    rightMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot - z), false);
+
   }
+
   /**
-   * turns by the amount specified without waiting 
+   * turns by the amount specified without waiting
+   * 
    * @param theta
    */
   public void turnToNoWait(double theta) {
     // TODO Auto-generated method stub
- // ensures minimum angle for turning
+    // ensures minimum angle for turning
     if (theta > Math.PI) {
       theta -= 2 * Math.PI;
     } else if (theta < -Math.PI) {
@@ -178,7 +174,6 @@ public class Navigation extends Thread {
     rightMotor.setSpeed(ROTATE_SPEED);
 
     // rotate motors at set speed
-
     // if angle is negative, turn to the left
     if (theta < 0) {
       leftMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, -(theta * 180) / Math.PI), true);
@@ -189,7 +184,7 @@ public class Navigation extends Thread {
       leftMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, (theta * 180) / Math.PI), true);
       rightMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, (theta * 180) / Math.PI), true);
     }
-    
+
   }
 
   public void travelTodis(double x, double y) {
@@ -255,7 +250,7 @@ public class Navigation extends Thread {
   }
 
   /**
-   * A method to turn our vehicle to a certain angle. 
+   * A method to turn our vehicle to a certain angle.
    * 
    * @author jacob
    * 
@@ -304,17 +299,18 @@ public class Navigation extends Thread {
   public static int convertAngle(double radius, double width, double angle) {
     return convertDistance(radius, Math.PI * width * angle / 360.0);
   }
+
   /**
-   * travel to final project travels without odo correction to the cartiesian coordinates 
-   * specified in the final projects coordinate system 
-   * takes doubles as input
+   * travel to final project travels without odo correction to the cartiesian coordinates specified
+   * in the final projects coordinate system takes doubles as input
+   * 
    * @param x
    * @param y
    */
   public void travelToFP(double x, double y) {
-    this.travelTo(x*30.48,y*30.48);
+    this.travelTo(x * 30.48, y * 30.48);
   }
-  
-  
-  
+
+
+
 }

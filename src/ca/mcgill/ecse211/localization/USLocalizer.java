@@ -6,7 +6,7 @@
  */
 package ca.mcgill.ecse211.localization;
 
-import lejos.hardware.Sound;
+// import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.SampleProvider;
 import ca.mcgill.ecse211.navigation.*;
@@ -78,7 +78,7 @@ public class USLocalizer {
       leftMotor.backward();
       rightMotor.forward();
     }
-    Sound.buzz();
+    // Sound.buzz();
     // record angle
     angleA = odometer.getXYT()[2];
 
@@ -93,7 +93,7 @@ public class USLocalizer {
       leftMotor.forward();
       rightMotor.backward();
     }
-    Sound.buzz();
+    // Sound.buzz();
     angleB = odometer.getXYT()[2];
 
     leftMotor.stop(true);

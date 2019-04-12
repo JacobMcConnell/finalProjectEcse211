@@ -38,13 +38,13 @@ public class Navigator {
 		this.rightMotor = rightMotor;
 		this.odometer = odometer;
 	}
-	public void directTravelTo(int x, int y) {
+	public void directTravelTo(double tN_END_x, double tN_END_y) {
 
 		double currx = odometer.getXYT()[0];
 		double curry = odometer.getXYT()[1];
 
-		double deltax = (x*TILE_SIZE) - currx;
-		double deltay = (y*TILE_SIZE) - curry;
+		double deltax = (tN_END_x*TILE_SIZE) - currx;
+		double deltay = (tN_END_y*TILE_SIZE) - curry;
 
 		double mTheta = Math.toDegrees(Math.atan2(deltax, deltay));
 

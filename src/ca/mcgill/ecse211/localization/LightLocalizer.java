@@ -12,110 +12,112 @@ import ca.mcgill.ecse211.navigation.Navigator;
 import ca.mcgill.ecse211.navigation.*;
 import ca.mcgill.ecse211.finalProject.*;
 
-/** 
- *This class serves to localize the robot at the starting corner
- * using the two front light sensors.It basically moves to the intersection 
- * of the starting corner and correct its orientation every time it detects a line in 
- * its path to this intersection. The robot will beep 3 three when the robot is parallel
- * to the left wall
+/**
+ * This class serves to localize the robot at the starting corner using the two front light
+ * sensors.It basically moves to the intersection of the starting corner and correct its orientation
+ * every time it detects a line in its path to this intersection. The robot will beep 3 three when
+ * the robot is parallel to the left wall
  * 
  * @author Erdong Luo
  */
 public class LightLocalizer {
 
-	//Constants
-	private final int FORWARD_SPEED;
-	private final int ROTATE_SPEED;
-	private final static double TILE_SIZE = Main.TILE_SIZE;
-	private final static double SENSOR_LENGTH = Main.SENSOR_LENGTH;
+  // Constants
+  private final int FORWARD_SPEED;
+  private final int ROTATE_SPEED;
+  private final static double TILE_SIZE = Main.TILE_SIZE;
+  private final static double SENSOR_LENGTH = Main.SENSOR_LENGTH;
 
-	private Odometer odometer;
+  private Odometer odometer;
 
-	private static Navigator navigator;
+  private static Navigator navigator;
 
-	private static LightSensorCon leftLS;
-	private static LightSensorCon rightLS;
+  private static LightSensorCon leftLS;
+  private static LightSensorCon rightLS;
 
-	private double color = 0.30;
-	/**
-	 * This is a constructor for this lightLocalizer class
-	 * @param odometer odometer of the navigator (singleton)
-	 * @param leftLS left front light sensor that is used
-	 * @param rightLS right front light sensor that is used
-	 *@param navigator navigator controller to control the motors
-	 */
-	public LightLocalizer(Odometer odometer,Navigator navigator,LightSensorCon leftLS,LightSensorCon rightLS ) {
-		this.odometer = odometer;
-		this.navigator = navigator;
-		this.FORWARD_SPEED = navigator.FORWARD_SPEED;
-		this.ROTATE_SPEED = navigator.ROTATE_SPEED;		
-		this.leftLS = leftLS;
-		this.rightLS = rightLS;
-	}
+  private double color = 0.30;
 
-	/**
-	 * This method localizes the navigator to the starting point using the two front light sensors
-	 */
-	public void initialLocalize() {
+  /**
+   * This is a constructor for this lightLocalizer class
+   * 
+   * @param odometer odometer of the navigator (singleton)
+   * @param leftLS left front light sensor that is used
+   * @param rightLS right front light sensor that is used
+   * @param navigator navigator controller to control the motors
+   */
+  public LightLocalizer(Odometer odometer, Navigator navigator, LightSensorCon leftLS,
+      LightSensorCon rightLS) {
+    this.odometer = odometer;
+    this.navigator = navigator;
+    this.FORWARD_SPEED = navigator.FORWARD_SPEED;
+    this.ROTATE_SPEED = navigator.ROTATE_SPEED;
+    this.leftLS = leftLS;
+    this.rightLS = rightLS;
+  }
 
-		// Start moving the navigator forward
-		navigator.setSpeeds(200,200);
+  /**
+   * This method localizes the navigator to the starting point using the two front light sensors
+   */
+  public void initialLocalize() {
 
-		navigator.moveForward();
+    // Start moving the navigator forward
+    navigator.setSpeeds(200, 200);
 
-		correct();
+    navigator.moveForward();
 
-		navigator.travelDist(SENSOR_LENGTH,200);
-		navigator.turnBy(90,true);
+    correct();
 
-		navigator.setSpeeds(200,200);
-		navigator.moveForward();
+    navigator.travelDist(SENSOR_LENGTH, 200);
+    navigator.turnBy(90, true);
 
-		correct();
+    navigator.setSpeeds(200, 200);
+    navigator.moveForward();
 
-		navigator.travelDist(SENSOR_LENGTH,200);
+    correct();
 
-		navigator.turnBy(90, false); //90 is a bit too much
+    navigator.travelDist(SENSOR_LENGTH, 200);
 
-		Sound.beep();
-		Sound.beep();
-		Sound.beep();
-	}
+    navigator.turnBy(90, false); // 90 is a bit too much
 
-	/**
-	 * This method serves to correct the orientation of the navigator with line detection
-	 */
-	private void correct() {
+    Sound.beep();
+    Sound.beep();
+    Sound.beep();
+  }
 
-		boolean rightLineDetected = false;
-		boolean leftLineDetected = false;
+  /**
+   * This method serves to correct the orientation of the navigator with line detection
+   */
+  private void correct() {
 
-		// Move the navigator until one of the sensors detects a line
-		while (!leftLineDetected && !rightLineDetected ) {
-			if (rightLS.fetch() < color) {
-				rightLineDetected = true;
-				// Stop the right motor
-				navigator.stopMoving(false, true);
+    boolean rightLineDetected = false;
+    boolean leftLineDetected = false;
 
-			} else if (leftLS.fetch() < color) {
-				leftLineDetected = true;
+    // Move the navigator until one of the sensors detects a line
+    while (!leftLineDetected && !rightLineDetected) {
+      if (rightLS.fetch() < color) {
+        rightLineDetected = true;
+        // Stop the right motor
+        navigator.stopMoving(false, true);
 
-				// Stop the left motor
-				navigator.stopMoving(true, false);
-			}
-		}
+      } else if (leftLS.fetch() < color) {
+        leftLineDetected = true;
 
-		// Keep moving the left/right motor until both lines have been detected
-		while ((!leftLineDetected || !rightLineDetected)) {
-			// If the other line detected, stop the motors
-			if (rightLineDetected && leftLS.fetch() < color) {
-				leftLineDetected = true;
-				navigator.stopMoving();
-			} else if (leftLineDetected && rightLS.fetch() < color) {
-				rightLineDetected = true;
-				navigator.stopMoving();
-			}
-		}
+        // Stop the left motor
+        navigator.stopMoving(true, false);
+      }
+    }
 
-	}
+    // Keep moving the left/right motor until both lines have been detected
+    while ((!leftLineDetected || !rightLineDetected)) {
+      // If the other line detected, stop the motors
+      if (rightLineDetected && leftLS.fetch() < color) {
+        leftLineDetected = true;
+        navigator.stopMoving();
+      } else if (leftLineDetected && rightLS.fetch() < color) {
+        rightLineDetected = true;
+        navigator.stopMoving();
+      }
+    }
+
+  }
 }

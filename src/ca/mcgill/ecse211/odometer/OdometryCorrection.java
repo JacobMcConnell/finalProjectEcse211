@@ -21,7 +21,7 @@ public class OdometryCorrection {
 	private final int FORWARD_SPEED;
 	private final int ROTATE_SPEED;
 	private final double TILE_SIZE;
-	private final double SENSOR_LENGTH;
+  private final double SENSOR_LENGTH;
 
 	// navigator controller
 	private Navigator navigator;
